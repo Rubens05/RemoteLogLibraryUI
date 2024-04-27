@@ -1,13 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
-// const cors = require('cors');
-// app.use(cors());
+
 
 
 require("dotenv").config();
 
-// Conexión a la base de datos
+// Database connection
 const uri = process.env.MONGO_URI;
 mongoose.connect(uri);
 
@@ -20,7 +19,7 @@ connection.once("open", () => {
 });
 
 
-// Definir el esquema del documento y el modelo
+// Define the schema and the model
 const logSchema = new mongoose.Schema({
     level: String,
     message: String,
@@ -28,22 +27,51 @@ const logSchema = new mongoose.Schema({
     topic: String,
     timestamp: { type: Date }
 });
-const Log = mongoose.model('Log', logSchema, "LogRegistry"); // 'Log' es el nombre del modelo y se corresponderá con una colección 'logs'
+const Log = mongoose.model('Log', logSchema, "LogRegistry");
 
-// Endpoint para obtener los logs
+// Endpoint for fetching logs
 app.get('/api', async (req, res) => {
-    const { startDate, endDate } = req.query;
+    const { startDate, endDate, level, senderID, topic, message, hourStart, hourEnd } = req.query;
+    console.log("Query params:", req.query);
     try {
         const query = {};
         if (startDate && endDate) {
             const start = new Date(startDate);
             const end = new Date(endDate);
-            start.setDate(start.getDate()); // Incluir todo el día de la fecha inicial
-            end.setDate(end.getDate() + 1); // Incluir todo el día de la fecha final
+            start.setDate(start.getDate()); //fix the timezone issue
+            end.setDate(end.getDate() + 1); //fix the timezone issue
             query.timestamp = { $gte: start, $lte: end };
             console.log("Querying logs between", start, "and", end);
         }
-        const logs = await Log.find(query).sort({ timestamp: -1 }).limit(500);
+
+        if (level !== '') {
+            query.level = level;
+            console.log("Querying logs with level", level);
+        }
+        if (senderID !== '') {
+            query.idSender = senderID;
+            console.log("Querying logs with senderID", senderID);
+        }
+        if (topic !== '') {
+            query.topic = topic;
+            console.log("Querying logs with topic", topic);
+        }
+        if (message !== '') {
+            query.message = { $regex: message, $options: 'i' };
+            console.log("Querying logs with message containing", message);
+        }
+
+
+        // TODO Iplement the hour range filter
+        // if (hourStart !== 0 || hourEnd != 23) {
+        //     query.timestamp = { ...query.timestamp, $gte: new Date(0, 0, 0, hourStart), $lte: new Date(0, 0, 0, hourEnd) };
+        //     console.log("Querying logs between ", startDate, "and", endDate, " and the range in hours", hourStart, "and", hourEnd);
+        // }
+
+
+
+
+        const logs = await Log.find(query).sort({ timestamp: -1 })/*.limit(500)*/; //Fix limit
         console.log("logs", logs)
         res.json({ logs });
     } catch (error) {
@@ -55,5 +83,5 @@ app.get('/api', async (req, res) => {
 
 
 app.listen(5000, () => {
-    console.log('Servidor en ejecución en el puerto 5000');
+    console.log('Server is running on port 5000');
 });
