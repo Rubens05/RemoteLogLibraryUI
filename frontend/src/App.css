@@ -172,27 +172,22 @@ input[type="number"] {
 /* Log level color definitions with more visible colors */
 .LogsTable td.log-level-ERROR {
   color: red;
-  /* Bright red */
 }
 
 .LogsTable td.log-level-WARNING {
   color: yellow;
-  /* Bright yellow */
 }
 
 .LogsTable td.log-level-INFO {
   color: green;
-  /* Bright green */
 }
 
 .LogsTable td.log-level-DEBUG {
-  color: blue;
-  /* Bright blue */
+  color: peru;
 }
 
 .LogsTable td.log-level-CRITICAL {
-  color: purple;
-  /* Purple */
+  color: violet;
 }
 
 
