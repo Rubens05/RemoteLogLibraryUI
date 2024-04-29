@@ -6,6 +6,7 @@ import './App.css';
 function App() {
   const [backendData, setBackendData] = useState({ logs: [] });
   const [loading, setLoading] = useState(false);
+  const [format, setFormat] = useState('default'); // New state for formatting
   const [filters, setFilters] = useState({
     startDate: new Date(),
     endDate: new Date(),
@@ -13,8 +14,8 @@ function App() {
     senderID: '',
     topic: '',
     message: '',
-    hourStart: 0,
-    hourEnd: 23
+    hourStart: 0, // default 00
+    hourEnd: 23 // default 23
   });
 
   useEffect(() => {
@@ -34,29 +35,45 @@ function App() {
     setFilters(prev => ({ ...prev, ...newFilters }));
   };
 
+  // Function to toggle the format
+  const toggleFormat = () => {
+    setFormat(format === 'default' ? 'colored' : 'default');
+  };
+
+
   return (
     <div className='App'>
-      <div className='Header'>HEADER</div>
-      <div className='SideBar'>
-        <SideBar onFiltersChange={handleFiltersChange} />
+      <div className='App-header'>
+        <div>
+          <h1> RemoteLog User Interface</h1>
+        </div>
       </div>
-      <div className='LogTable'>
 
-        {loading && <h1>Loading Logs...</h1>} {/*TODO insert loader component*/}
+      <div className="App-content">
+        <div className={"App-sidebar open"}>
+          <h1>Filters</h1>
+          <SideBar onFiltersChange={handleFiltersChange} />
+        </div>
 
-        {!loading && backendData.logs.length === 0 ? (
-          <p>No results found</p>
-        ) : (!loading &&
-          <div>
-            <h1>Logs</h1>
-            <LogsTable logs={backendData.logs} />
-          </div>
-        )}
+        <div className='App-logs'>
+          {loading && <h1>Loading Logs...</h1>} {/*TODO insert loader component*/}
+          {!loading && backendData.logs.length === 0 ? (
+            <p>No results found</p>
+          ) : (
+            <div className='cointainer'>
 
+              <div>
+                <h1>Logs</h1>
 
+                <button onClick={toggleFormat}>Toggle Format</button> {/* Toggle button */}
+              </div>
+              <LogsTable logs={backendData.logs} format={format} />
+            </div>
+          )}
+        </div>
       </div>
-      <div className='Footer'>FOOTER</div>
-    </div>
+
+    </div >
   );
 }
 

@@ -1,77 +1,61 @@
-import React from 'react';
-import { useTable } from 'react-table';
+// LogsTable.js
+import React, { useState } from 'react';
 
-const LogsTable = ({ logs }) => {
-    // Definición de las columnas de la tabla
-    const columns = React.useMemo(
-        () => [
-            {
-                Header: 'Level',
-                accessor: 'level', // el valor que elige qué campo de los datos usar para esta columna
-            },
-            {
-                Header: 'Message',
-                accessor: 'message',
-            },
-            {
-                Header: 'Sender ID',
-                accessor: 'idSender',
-            },
-            {
-                Header: 'Topic',
-                accessor: 'topic',
-            },
-            {
-                Header: 'Timestamp',
-                accessor: 'timestamp',
-                Cell: ({ value }) => {
-                    // Formatear la fecha
-                    return new Date(value).toLocaleString();
-                }
-            }
-        ],
-        []
-    );
+const LogsTable = ({ logs, format }) => {
+    const [currentPage, setCurrentPage] = useState(0);
+    const itemsPerPage = 18;
 
-    // Uso del hook useTable para pasar la configuración de datos y columnas
-    const {
-        getTableProps,
-        getTableBodyProps,
-        headerGroups,
-        rows,
-        prepareRow,
-    } = useTable({ columns, data: logs });
+    const paginatedLogs = logs.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
 
-    // Renderizado de la tabla
+    const handlePageChange = (newPage) => {
+        if (newPage >= 0 && newPage < Math.ceil(logs.length / itemsPerPage)) {
+            setCurrentPage(newPage);
+        }
+    };
+
+    // Use a class based on the log level if format is 'colored', otherwise use a default class
+    const getRowClass = (log) => {
+        return format === 'colored' ? getLogLevelClass(log.level) : '';
+    };
+
+    // Function to return the class based on the log level
+    const getLogLevelClass = (level) => `log-level-${level}`;
+
     return (
-        <table {...getTableProps()} style={{ border: 'solid 1px blue' }}>
-            <thead>
-                {headerGroups.map(headerGroup => (
-                    <tr {...headerGroup.getHeaderGroupProps()}>
-                        {headerGroup.headers.map(column => (
-                            <th {...column.getHeaderProps()} style={{ borderBottom: 'solid 3px red', background: 'aliceblue', color: 'black', fontWeight: 'bold' }}>
-                                {column.render('Header')}
-                            </th>
-                        ))}
+        <div>
+            <table className="LogsTable">
+                <thead>
+                    <tr>
+                        <th>Level</th>
+                        <th>Message</th>
+                        <th>Sender ID</th>
+                        <th>Topic</th>
+                        <th>Timestamp</th>
                     </tr>
-                ))}
-            </thead>
-            <tbody {...getTableBodyProps()}>
-                {rows.map(row => {
-                    prepareRow(row);
-                    return (
-                        <tr {...row.getRowProps()}>
-                            {row.cells.map(cell => (
-                                <td {...cell.getCellProps()} style={{ padding: '10px', border: 'solid 1px gray' }}>
-                                    {cell.render('Cell')}
-                                </td>
-                            ))}
+                </thead>
+                <tbody>
+                    {paginatedLogs.map((log, index) => (
+                        <tr key={index}>
+                            <td className={getRowClass(log)}>{log.level}</td>
+                            <td className={getRowClass(log)}>{log.message}</td>
+                            <td className={getRowClass(log)}>{log.senderID}</td>
+                            <td className={getRowClass(log)}>{log.topic}</td>
+                            <td className={getRowClass(log)}>{log.timestamp}</td>
                         </tr>
-                    );
-                })}
-            </tbody>
-        </table>
+                    ))}
+                </tbody>
+            </table>
+            <div className="pagination-controls">
+                <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 0}>
+                    Previous
+                </button>
+                <span>Page {currentPage + 1} of {Math.ceil(logs.length / itemsPerPage)}</span>
+                <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === Math.ceil(logs.length / itemsPerPage) - 1}>
+                    Next
+                </button>
+            </div>
+        </div>
     );
 };
 
-export default LogsTable;
+export default LogsTable; 

@@ -70,10 +70,11 @@ const SideBar = ({ onFiltersChange }) => {
     };
     return (
         <div>
-            <h1>Filters</h1>
-
             <p>Calendar</p>
-            <DateRangeFilter onDateRangeChange={handleDateRangeChange} />
+
+            <div>
+                <DateRangeFilter onDateRangeChange={handleDateRangeChange} />
+            </div>
 
             <p>Hours Range</p>
             <div>

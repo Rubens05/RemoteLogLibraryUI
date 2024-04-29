@@ -39,7 +39,7 @@ app.get('/api', async (req, res) => {
             const start = new Date(startDate);
             const end = new Date(endDate);
             start.setDate(start.getDate()); //fix the timezone issue
-            end.setDate(end.getDate() + 1); //fix the timezone issue
+            end.setDate(end.getDate()); //fix the timezone issue
             query.timestamp = { $gte: start, $lte: end };
             console.log("Querying logs between", start, "and", end);
         }
