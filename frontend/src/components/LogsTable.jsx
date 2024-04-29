@@ -38,7 +38,7 @@ const LogsTable = ({ logs, format }) => {
                         <tr key={index}>
                             <td className={getRowClass(log)}>{log.level}</td>
                             <td className={getRowClass(log)}>{log.message}</td>
-                            <td className={getRowClass(log)}>{log.senderID}</td>
+                            <td className={getRowClass(log)}>{log.idSender}</td>
                             <td className={getRowClass(log)}>{log.topic}</td>
                             <td className={getRowClass(log)}>{log.timestamp}</td>
                         </tr>
