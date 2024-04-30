@@ -60,8 +60,8 @@ function App() {
         </div>
       </div>
 
-      <div className="App-content">
-        <div className={"App-sidebar open"}>
+      <div >
+        <div className="App-sidebar">
           <h1>Filters</h1>
           <SideBar onFiltersChange={handleFiltersChange} />
         </div>
@@ -71,10 +71,22 @@ function App() {
           {!loading && backendData.logs.length === 0 ? (
             <p>No results found</p>
           ) : (
-            <div className='cointainer'>
+            <div >
 
-              <div>
-                <h1>Logs</h1>
+              <div >
+                {filters.startDate && filters.endDate ? (
+                  //TODO MAKE THE STYLES
+                  // Show the day if both dates are the same
+                  filters.startDate.toISOString().split('T')[0] === filters.endDate.toISOString().split('T')[0] ?
+                    (<h1> Showing logs of the day {filters.endDate.toISOString().split('T')[0]}</h1>) :
+                    // Show the date range if both dates are set
+                    (<h1>Showing logs between {filters.startDate.toISOString().split('T')[0]} and {filters.endDate.toISOString().split('T')[0]}</h1>)
+                )
+                  : (
+                    // Show all logs if no date range is set
+                    <h1>Showing all logs</h1>
+                  )}
+
 
                 <button onClick={toggleFormat}>Toggle Format</button> {/* Toggle button */}
               </div>
