@@ -74,9 +74,12 @@ function App() {
     <div className='App'>
 
       <div className='App-header'>
-        <div>
-          <h1> RemoteLog User Interface</h1>
-        </div>
+        <h1> RemoteLog User Interface</h1>
+
+        <button onClick={() => window.location.href = '/home'}>Home</button>
+        <button onClick={() => window.location.href = '/dashboard'}>Dashboard</button>
+        <button onClick={() => window.location.href = '/form'}>Contact me!</button>
+
       </div>
 
 
@@ -107,13 +110,13 @@ function App() {
                   // TODO MAKE THE STYLES If the start and end date are set
                   ? (filters.startDate.toISOString().split('T')[0] === filters.endDate.toISOString().split('T')[0]
                     // Show the date if both dates are the same
-                    ? (<h2> Showing logs of the day {filters.endDate.toISOString().split('T')[0]}</h2>)
+                    ? (<h2>FIXME Showing logs of the day {filters.endDate.toISOString().split('T')[0]}</h2>)
                     // Show the date range if both dates are set
-                    : (<h2>Showing logs between {filters.startDate.toISOString().split('T')[0]} and {filters.endDate.toISOString().split('T')[0]}</h2>))
+                    : (<h2>FIXME Showing logs between {filters.startDate.toISOString().split('T')[0]} and {filters.endDate.toISOString().split('T')[0]}</h2>))
                   // Show all logs if no date range is set
                   : (<h2>Showing all logs</h2>)}
 
-                <button onClick={toggleFormat}>Toggle Format</button> {/* Toggle button */}
+                <button title='Change logs color' onClick={toggleFormat}>Toggle Format</button> {/* Toggle button */}
               </div>
               <LogsTable logs={backendData.logs} format={format} />
             </div>)

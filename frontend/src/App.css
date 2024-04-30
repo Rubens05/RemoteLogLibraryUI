@@ -30,11 +30,30 @@
 
   .App-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     text-align: center;
     position: fixed;
     width: 100%;
     /* Position the header content and toggle button */
+  }
+
+  .App-header h1 {
+    color: #61dafb;
+    border: none;
+    font-weight: bold;
+    transition: background-color 0.2s;
+  }
+
+  .App-header button {
+    justify-content: right;
+    background-color: #61dafb;
+    border: none;
+    margin: 0 1rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 4px;
+    transition: background-color 0.2s;
   }
 
 
@@ -134,7 +153,7 @@
   /* Styles for LogsTable */
   .LogsTable {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
     margin-top: 0.45rem;
     background-color: #1c1c1c;
   }
@@ -196,6 +215,18 @@
     align-items: center;
     padding: 1rem;
     color: #fff;
+  }
+
+  .pagination-controls select {
+    width: auto;
+    padding: 0.5rem 1rem;
+    margin: 0 1rem;
+    background-color: #61dafb;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
   }
 
   .pagination-controls button {

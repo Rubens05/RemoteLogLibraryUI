@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 
 const LogsTable = ({ logs, format }) => {
     const [currentPage, setCurrentPage] = useState(0);
-    const itemsPerPage = 17;
+    const [itemsPerPage, setItemsPerPage] = useState(16);
 
     const paginatedLogs = logs.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
 
@@ -11,6 +11,11 @@ const LogsTable = ({ logs, format }) => {
         if (newPage >= 0 && newPage < Math.ceil(logs.length / itemsPerPage)) {
             setCurrentPage(newPage);
         }
+    };
+
+    const handleItemsPerPageChange = (event) => {
+        setItemsPerPage(Number(event.target.value));  // Actualizar el estado con la nueva selección
+        setCurrentPage(0);  // Opcional: Volver a la primera página al cambiar el número de ítems por página
     };
 
     // Use a class based on the log level if format is 'colored', otherwise use a default class
@@ -55,6 +60,7 @@ const LogsTable = ({ logs, format }) => {
                 </tbody>
             </table>
             <div className="pagination-controls">
+
                 <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 0}>
                     Previous
                 </button>
@@ -62,6 +68,13 @@ const LogsTable = ({ logs, format }) => {
                 <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === Math.ceil(logs.length / itemsPerPage) - 1}>
                     Next
                 </button>
+
+                <select title='Items per page' value={itemsPerPage} onChange={handleItemsPerPageChange}>
+                    <option value="16">Items per page</option>
+                    <option value="30">30</option>
+                    <option value="100">100</option>
+                    <option value="500">500</option>
+                </select>
             </div>
         </div>
     );
