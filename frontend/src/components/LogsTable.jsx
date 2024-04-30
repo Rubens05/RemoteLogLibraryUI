@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 
 const LogsTable = ({ logs, format }) => {
     const [currentPage, setCurrentPage] = useState(0);
-    const itemsPerPage = 18;
+    const itemsPerPage = 17;
 
     const paginatedLogs = logs.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
 

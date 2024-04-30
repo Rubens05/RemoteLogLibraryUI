@@ -41,6 +41,7 @@ app.get('/api', async (req, res) => {
             const end = new Date(endDate);
             start.setDate(start.getDate() + 1);
             end.setDate(end.getDate() + 2);
+
             query.timestamp = { $gte: start, $lte: end };
             console.log("Querying logs between", start, "and", end);
         }

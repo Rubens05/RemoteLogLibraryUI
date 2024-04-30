@@ -72,51 +72,53 @@ function App() {
 
   return (
     <div className='App'>
+
       <div className='App-header'>
         <div>
           <h1> RemoteLog User Interface</h1>
         </div>
       </div>
 
-      <div >
-        <div className="App-sidebar">
+
+      <div className="App-sidebar">
+
+        <div className="toggle-controls" >
           <h1>Filters</h1>
-          <SideBar
-            onFiltersChange={handleFiltersChange}
-            levelOptions={levelOptions}
-            senderOptions={senderOptions}
-            topicOptions={topicOptions}
-            filters={filters}
-          />
         </div>
 
+        <SideBar
+          onFiltersChange={handleFiltersChange}
+          levelOptions={levelOptions}
+          senderOptions={senderOptions}
+          topicOptions={topicOptions}
+          filters={filters}
+        />
+      </div>
+
+      <div>
         <div className='App-logs'>
-          {loading && <h1>Loading Logs...</h1>} {/*TODO insert loader component*/}
-          {!loading && backendData.logs.length === 0 ? (
-            <p>No results found</p>
-          ) : (
-            <div >
-
-              <div >
-                {filters.startDate && filters.endDate ? (
-                  //TODO MAKE THE STYLES
-                  // Show the day if both dates are the same
-                  filters.startDate.toISOString().split('T')[0] === filters.endDate.toISOString().split('T')[0] ?
-                    (<h1> Showing logs of the day {filters.endDate.toISOString().split('T')[0]}</h1>) :
+          {/* Show the loading message if the logs are being fetched */}
+          {/*TODO insert loader component*/}
+          {loading === true
+            ? (<h1>Loading Logs...</h1>)
+            : (backendData.logs.length === 0 ? (<p>No results found</p>) : (<div >
+              <div className="toggle-controls">
+                {filters.startDate && filters.endDate
+                  // TODO MAKE THE STYLES If the start and end date are set
+                  ? (filters.startDate.toISOString().split('T')[0] === filters.endDate.toISOString().split('T')[0]
+                    // Show the date if both dates are the same
+                    ? (<h2> Showing logs of the day {filters.endDate.toISOString().split('T')[0]}</h2>)
                     // Show the date range if both dates are set
-                    (<h1>Showing logs between {filters.startDate.toISOString().split('T')[0]} and {filters.endDate.toISOString().split('T')[0]}</h1>)
-                )
-                  : (
-                    // Show all logs if no date range is set
-                    <h1>Showing all logs</h1>
-                  )}
-
+                    : (<h2>Showing logs between {filters.startDate.toISOString().split('T')[0]} and {filters.endDate.toISOString().split('T')[0]}</h2>))
+                  // Show all logs if no date range is set
+                  : (<h2>Showing all logs</h2>)}
 
                 <button onClick={toggleFormat}>Toggle Format</button> {/* Toggle button */}
               </div>
               <LogsTable logs={backendData.logs} format={format} />
-            </div>
-          )}
+            </div>)
+            )
+          }
         </div>
       </div>
 

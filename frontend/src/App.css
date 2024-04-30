@@ -1,227 +1,275 @@
-/* General resets for better control */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+  /* General resets for better control */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 
-body {
-  font-family: 'Arial', sans-serif;
-  /* Use a font that fits your brand */
-}
+  body {
+    font-family: 'Arial', sans-serif;
+    /* Use a font that fits your brand */
+  }
 
-.App {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background-color: #062730;
-  /* PARA CAMBIAR EL COLOR DE FONDO */
-  /* A light background for the content area */
-}
+  .App {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #062730;
+    /* PARA CAMBIAR EL COLOR DE FONDO */
+    /* A light background for the content area */
+  }
 
-.App-header {
-  background-color: #333;
-  /* Dark header and footer */
-  color: #fff;
-  padding: 1rem;
-  margin-bottom: auto;
+  .App-header {
+    background-color: #333;
+    /* Dark header and footer */
+    color: #fff;
+    padding: 1rem;
+    margin-bottom: auto;
 
-}
+  }
 
-.App-header {
-  display: flex;
-  justify-content: space-between;
-  text-align: center;
-  position: fixed;
-  width: 100%;
-  /* Position the header content and toggle button */
-}
-
-
-.toggle-button {
-  background-color: #61dafb;
-  border: none;
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  font-weight: bold;
-  border-radius: 4px;
-  transition: background-color 0.2s;
-}
-
-.toggle-button:hover {
-  background-color: #4aaedf;
-  /* Slightly darker on hover */
-}
-
-.App-content {
-  display: flex;
-  flex-grow: 1;
-}
-
-.App-sidebar {
-  width: 275px;
-  background-color: #062730;
-  color: #fff;
-  padding: 1rem;
-  transition: all 0.3s;
-  position: fixed;
-  left: 0;
-  top: 67.9px;
-  bottom: 0;
-  z-index: 1000;
-  /* Ensure sidebar is above the content */
-}
-
-.App-sidebar h1 {
-  color: #61dafb;
-  /* Brand color for titles */
-  margin-bottom: 1rem;
-}
-
-.App-sidebar.closed {
-  transform: translateX(-100%);
-}
-
-.App-logs {
-  flex-grow: 1;
-  margin-left: 280px;
-  margin-top: 60px;
-  /* Make room for the sidebar */
-  padding: 20px;
-  transition: margin-left 0.3s;
-  background-color: #062730;
-  /* White background for the content */
-  overflow-x: hidden;
-  /* In case the table is wider than the screen */
-}
-
-.App-logs .LogsTable {
-  width: calc(100% - 40px);
-  /* Account for padding */
-  margin-bottom: 1rem;
-}
-
-.App-logs.closed {
-  margin-left: 0;
-}
-
-
-
-/* Input and Select styles */
-input[type="text"],
-select,
-input[type="number"] {
-  width: 100%;
-  padding: 0.5rem;
-  margin-bottom: 1rem;
-  border: 1px solid #ddd;
-  /* Subtle border */
-  border-radius: 4px;
-}
-
-/* Apply responsive design at a certain breakpoint */
-@media (max-width: 768px) {
-
-  .App-sidebar,
-  .App-logs {
+  .App-header {
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+    position: fixed;
     width: 100%;
+    /* Position the header content and toggle button */
+  }
+
+
+  .toggle-button {
+    background-color: #61dafb;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+  }
+
+  .toggle-button:hover {
+    background-color: #4aaedf;
+    /* Slightly darker on hover */
+  }
+
+  .App-content {
+    display: flex;
+    flex-grow: 1;
+  }
+
+  .App-sidebar {
+    width: 275px;
+    background-color: #062730;
+    color: #fff;
+    padding: 1rem;
+    transition: all 0.3s;
+    position: fixed;
+    left: 0;
+    top: 67.9px;
+    bottom: 0;
+    z-index: 1000;
+  }
+
+  .App-sidebar h1 {
+    color: #61dafb;
+    margin-bottom: 1rem;
+
+  }
+
+  .App-sidebar.closed {
+    transform: translateX(-100%);
+  }
+
+  .App-logs {
+    flex-grow: 1;
+    margin-left: 280px;
+    margin-top: 60px;
+    padding: 20px;
+    transition: margin-left 0.3s;
+    background-color: #062730;
+    overflow-x: hidden;
+  }
+
+  .App-logs .LogsTable {
+    width: calc(100% - 40px);
+    /* Account for padding */
+    margin-bottom: 1rem;
+  }
+
+  .App-logs.closed {
     margin-left: 0;
   }
 
-  .App-logs {
-    padding: 10px;
+
+
+  /* Input and Select styles */
+  input[type="text"],
+  select,
+  input[type="number"] {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    /* Subtle border */
+    border-radius: 4px;
   }
-}
+
+  /* Apply responsive design at a certain breakpoint */
+  @media (max-width: 768px) {
+
+    .App-sidebar,
+    .App-logs {
+      width: 100%;
+      margin-left: 0;
+    }
+
+    .App-logs {
+      padding: 10px;
+    }
+  }
 
 
 
-/* Styles for LogsTable */
-.LogsTable {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-  background-color: #1c1c1c;
-}
+  /* Styles for LogsTable */
+  .LogsTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.45rem;
+    background-color: #1c1c1c;
+  }
 
-.LogsTable th,
-.LogsTable td {
-  padding: 8px;
-  text-align: left;
-  border-bottom: 1px solid #3d3d3d;
-}
+  .LogsTable th,
+  .LogsTable td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #3d3d3d;
+  }
 
-.LogsTable th {
-  background-color: #333;
-  color: #fff;
-}
+  .LogsTable th {
+    background-color: #333;
+    color: #fff;
+  }
 
-.LogsTable tr:nth-child(even) {
-  background-color: #2c2c2c;
-}
+  .LogsTable tr:nth-child(even) {
+    background-color: #2c2c2c;
+  }
 
-.LogsTable tr:nth-child(odd) {
-  background-color: #1c1c1c;
-}
+  .LogsTable tr:nth-child(odd) {
+    background-color: #1c1c1c;
+  }
 
-.LogsTable tr:hover {
-  background-color: #464646;
-}
+  .LogsTable tr:hover {
+    background-color: #464646;
+  }
 
-.LogsTable td {
-  color: #ddd;
-}
+  .LogsTable td {
+    color: #ddd;
+  }
 
-/* Log level color definitions with more visible colors */
-.LogsTable td.log-level-ERROR {
-  color: red;
-}
+  /* Log level color definitions with more visible colors */
+  .LogsTable td.log-level-ERROR {
+    color: red;
+  }
 
-.LogsTable td.log-level-WARNING {
-  color: yellow;
-}
+  .LogsTable td.log-level-WARNING {
+    color: yellow;
+  }
 
-.LogsTable td.log-level-INFO {
-  color: green;
-}
+  .LogsTable td.log-level-INFO {
+    color: green;
+  }
 
-.LogsTable td.log-level-DEBUG {
-  color: peru;
-}
+  .LogsTable td.log-level-DEBUG {
+    color: peru;
+  }
 
-.LogsTable td.log-level-CRITICAL {
-  color: violet;
-}
+  .LogsTable td.log-level-CRITICAL {
+    color: violet;
+  }
 
 
-/* Styles for pagination controls */
-.pagination-controls {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 1rem;
-  color: #fff;
-}
+  /* Styles for pagination controls */
+  .pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    color: #fff;
+  }
 
-.pagination-controls button {
-  padding: 0.5rem 1rem;
-  margin: 0 1rem;
-  background-color: #61dafb;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.2s;
-}
+  .pagination-controls button {
+    padding: 0.5rem 1rem;
+    margin: 0 1rem;
+    background-color: #61dafb;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+  }
 
-.pagination-controls button:hover {
-  background-color: #4aaedf;
-}
+  .pagination-controls button:hover {
+    background-color: #4aaedf;
+  }
 
-.pagination-controls button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
+  .pagination-controls button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
 
-.pagination-controls span {
-  color: #fff;
-}
+  .pagination-controls span {
+    color: #fff;
+  }
+
+  /* Styles for toggle button */
+  .toggle-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    color: #fff;
+  }
+
+  .toggle-controls h1 {
+    margin: 0.5rem;
+    margin-top: -0.5rem;
+    color: #61dafb;
+    border: none;
+    font-weight: bold;
+    transition: background-color 0.2s;
+  }
+
+  .toggle-controls h2 {
+    margin: -1rem;
+    color: #61dafb;
+    border: none;
+    font-weight: bold;
+    transition: background-color 0.2s;
+  }
+
+  .toggle-controls button {
+
+    padding: 0.5rem 1rem;
+    margin: 0 1.5rem;
+    margin-left: auto;
+    background-color: #61dafb;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+  }
+
+  .toggle-controls button:hover {
+    background-color: #4aaedf;
+  }
+
+  .toggle-controls button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+
+  .toggle-controls span {
+    color: #fff;
+  }

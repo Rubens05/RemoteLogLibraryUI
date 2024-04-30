@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import DateRangeFilter from './DateRangeFilter';
 
 const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, filters }) => {
+    const { startDate, endDate } = filters;
     const [level, setLevel] = useState('');
     const [senderID, setSenderID] = useState('');
     const [topic, setTopic] = useState('');
@@ -73,25 +74,35 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
 
     return (
         <div>
-            <p>Calendar</p>
 
             <div>
                 <DateRangeFilter onDateRangeChange={handleDateRangeChange} />
             </div>
+            {console.log(startDate, endDate)}
+            {(startDate && endDate && (startDate.toISOString().split('T')[0] === filters.endDate.toISOString().split('T')[0]))
+                ? (<div>
+                    <div>
+                        <label htmlFor='hourStart'>Start Hour: </label>
+                        <input type='number' id='hourStart' name='hourStart' min='0' max='23' value={hourStart} onChange={handleHourStartChange} disabled={false} />
+                    </div>
+                    <div>
+                        <label htmlFor="hourEnd">End Hour:</label>
+                        <input type="number" id="hourEnd" name="hourEnd" min="0" max="23" value={hourEnd} onChange={handleHourEndChange} disabled={false} />
+                    </div>
+                </div>
 
-            <p>Hours Range TODO</p>
-            <div>
-                <label htmlFor="hourStart">Start Hour:</label>
-                <input type="number" id="hourStart" name="hourStart"
-                    min="0" max="23" value={hourStart}
-                    onChange={handleHourStartChange} />
-            </div>
-            <div>
-                <label htmlFor="hourEnd">End Hour:</label>
-                <input type="number" id="hourEnd" name="hourEnd"
-                    min="0" max="23" value={hourEnd}
-                    onChange={handleHourEndChange} />
-            </div>
+                )
+                : (<div>
+                    <div>
+                        <label htmlFor='hourStart'>Start Hour: </label>
+                        <input type='number' id='hourStart' name='hourStart' min='0' max='23' value={hourStart} onChange={handleHourStartChange} disabled={true} />
+                    </div>
+                    <div>
+                        <label htmlFor="hourEnd">End Hour:</label>
+                        <input type="number" id="hourEnd" name="hourEnd" min="0" max="23" value={hourEnd} onChange={handleHourEndChange} disabled={true} />
+                    </div>
+                </div>)
+            }
 
             <p>Level</p>
             <select id="level" name="level" value={level} onChange={handleLevelChange}>
@@ -125,8 +136,15 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
                 onBlur={handleBlur} />
 
             <p> Clear filters TODO</p>
-            <button onClick={() => onFiltersChange({ startDate: null, endDate: null, level: '', senderID: '', topic: '', message: '' })}>Clear filters</button>
-            {/* TODO FIX CLEAR BUTTON  */}
+
+            <div className="pagination-controls">
+
+                <button onClick={() => onFiltersChange({ startDate: null, endDate: null, level: '', senderID: '', topic: '', message: '' })}>Clear filters</button>
+                {/* TODO FIX CLEAR BUTTON  */}
+
+            </div>
+
+
         </div>
     );
 }
