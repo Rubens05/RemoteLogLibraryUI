@@ -273,3 +273,20 @@
   .toggle-controls span {
     color: #fff;
   }
+
+  /* Styles for the log table timestamp*/
+  .timestamp-controls button {
+    padding: 0.05rem 1rem;
+    margin-left: 1rem;
+    justify-content: center;
+    background-color: #61dafb;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+  }
+
+  .timestamp-controls button:hover {
+    background-color: #4aaedf;
+  }

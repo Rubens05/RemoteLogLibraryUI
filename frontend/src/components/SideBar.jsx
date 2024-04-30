@@ -9,6 +9,7 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
     const [message, setMessage] = useState('');
     const [hourStart, setHourStart] = useState(0);
     const [hourEnd, setHourEnd] = useState(23);
+    const [dateFilterKey, setDateFilterKey] = useState(0); // Estado para manejar la clave del DateRangeFilter
 
     // Handler for date range changes from DateRangeFilter
     const handleDateRangeChange = (start, end) => {
@@ -70,13 +71,37 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
 
     };
 
+    const clearFilters = () => {
+        // Restablecer estados locales
+        setLevel('');
+        setSenderID('');
+        setTopic('');
+        setMessage('');
+        setHourStart(0);
+        setHourEnd(23);
+        setDateFilterKey(prevKey => prevKey + 1);
+
+        // Restablecer filtros en el componente padre
+        onFiltersChange({
+            startDate: null,
+            endDate: null,
+            level: '',
+            senderID: '',
+            topic: '',
+            message: '',
+            hourStart: 0,
+            hourEnd: 23
+        });
+    };
+
 
 
     return (
         <div>
 
             <div>
-                <DateRangeFilter onDateRangeChange={handleDateRangeChange} />
+                <DateRangeFilter key={dateFilterKey} // Key to force re-render of DateRangeFilter
+                    onDateRangeChange={handleDateRangeChange} />
             </div>
             {console.log(startDate, endDate)}
             {(startDate && endDate && (startDate.toISOString().split('T')[0] === filters.endDate.toISOString().split('T')[0]))
@@ -135,12 +160,9 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
                 onKeyDown={handleKeyDown}
                 onBlur={handleBlur} />
 
-            <p> Clear filters TODO</p>
-
             <div className="pagination-controls">
 
-                <button onClick={() => onFiltersChange({ startDate: null, endDate: null, level: '', senderID: '', topic: '', message: '' })}>Clear filters</button>
-                {/* TODO FIX CLEAR BUTTON  */}
+                <button onClick={clearFilters}>Clear filters</button>                {/* TODO FIX CLEAR BUTTON  */}
 
             </div>
 

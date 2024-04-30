@@ -30,7 +30,16 @@ const LogsTable = ({ logs, format }) => {
                         <th>Message</th>
                         <th>Sender ID</th>
                         <th>Topic</th>
-                        <th>Timestamp</th>
+                        <th>
+
+                            {/*TODO button for change time format*/}
+                            <div className="timestamp-controls">
+                                Timestamp
+                                <button>
+                                    UTC-Local TODO
+                                </button>
+                            </div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
