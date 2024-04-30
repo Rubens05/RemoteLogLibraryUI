@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import DateRangeFilter from './DateRangeFilter';
 
-const SideBar = ({ onFiltersChange }) => {
+const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, filters }) => {
     const [level, setLevel] = useState('');
     const [senderID, setSenderID] = useState('');
     const [topic, setTopic] = useState('');
@@ -68,6 +68,9 @@ const SideBar = ({ onFiltersChange }) => {
         onFiltersChange({ message: message.trim() });
 
     };
+
+
+
     return (
         <div>
             <p>Calendar</p>
@@ -76,7 +79,7 @@ const SideBar = ({ onFiltersChange }) => {
                 <DateRangeFilter onDateRangeChange={handleDateRangeChange} />
             </div>
 
-            <p>Hours Range</p>
+            <p>Hours Range TODO</p>
             <div>
                 <label htmlFor="hourStart">Start Hour:</label>
                 <input type="number" id="hourStart" name="hourStart"
@@ -93,27 +96,25 @@ const SideBar = ({ onFiltersChange }) => {
             <p>Level</p>
             <select id="level" name="level" value={level} onChange={handleLevelChange}>
                 <option value="">Select...</option>
-                <option value="ERROR">ERROR</option>
-                <option value="WARNING">WARNING</option>
-                <option value="INFO">INFO</option>
-                <option value="DEBUG">DEBUG</option>
-                <option value="CRITICAL">CRITICAL</option>
+                {levelOptions.map(option => (
+                    <option key={option} value={option}>{option}</option>
+                ))}
             </select>
 
             <p>Sender ID</p>
             <select id="senderID" name="senderID" value={senderID} onChange={handleSenderIDChange}>
                 <option value="">Select...</option>
-                <option value="SPACE">SPACE</option>
-                <option value="MARS">MARS</option>
-                <option value="CRYPTO">CRYPTO</option>
+                {senderOptions.map(option => (
+                    <option key={option} value={option}>{option}</option>
+                ))}
             </select>
 
             <p>Topic</p>
             <select id="topic" name="topic" value={topic} onChange={handleTopicChange}>
-                <option value="">Select...</option>
-                <option value="RASENGAN">RASENGAN</option>
-                <option value="CAPITAL LETTERS TOPIC">CAPITAL LETTERS TOPIC</option>
-                <option value="ANOTHER TOPIC">ANOTHER TOPIC</option>
+                <option value="" >Select...</option>
+                {topicOptions.map(option => (
+                    <option key={option} value={option}>{option}</option>
+                ))}
             </select>
 
             <p>Message</p>
@@ -122,6 +123,10 @@ const SideBar = ({ onFiltersChange }) => {
                 onChange={handleMessageChange}
                 onKeyDown={handleKeyDown}
                 onBlur={handleBlur} />
+
+            <p> Clear filters TODO</p>
+            <button onClick={() => onFiltersChange({ startDate: null, endDate: null, level: '', senderID: '', topic: '', message: '' })}>Clear filters</button>
+            {/* TODO FIX CLEAR BUTTON  */}
         </div>
     );
 }

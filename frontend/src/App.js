@@ -7,6 +7,9 @@ function App() {
   const [backendData, setBackendData] = useState({ logs: [] });
   const [loading, setLoading] = useState(false);
   const [format, setFormat] = useState('default'); // New state for formatting
+  const [levelOptions, setLevelOptions] = useState([]);
+  const [senderOptions, setSenderOptions] = useState([]);
+  const [topicOptions, setTopicOptions] = useState([]);
   const [filters, setFilters] = useState({
     startDate: null,
     endDate: null,
@@ -18,10 +21,25 @@ function App() {
     hourEnd: 23 // default 23
   });
 
+  // Initial fetch to get the filter options
+  useEffect(() => {
+    fetch('/api/filters')
+      .then(response => response.json())
+      .then(data => {
+        setLevelOptions(data.levelOptions);
+        setSenderOptions(data.senderOptions);
+        setTopicOptions(data.topicOptions);
+      })
+      .catch(error => console.error('Error loading filter options:', error));
+  }, []);
+
+
+  // Fetch logs when filters change
   useEffect(() => {
     setLoading(true);
 
     const { startDate, endDate, level, senderID, topic, message, hourStart, hourEnd } = filters;
+
     if (!startDate && !endDate) {
       const queryString = `level=${level}&senderID=${senderID}&topic=${topic}&message=${message}&hourStart=${hourStart}&hourEnd=${hourEnd}`;
       fetch(`/api?${queryString}`)
@@ -30,7 +48,6 @@ function App() {
           setBackendData(data);
           setLoading(false);
         });
-      return;
     } else {
       const queryString = `startDate=${startDate.toISOString().split('T')[0]}&endDate=${endDate.toISOString().split('T')[0]}&level=${level}&senderID=${senderID}&topic=${topic}&message=${message}&hourStart=${hourStart}&hourEnd=${hourEnd}`;
       fetch(`/api?${queryString}`)
@@ -39,6 +56,7 @@ function App() {
           setBackendData(data);
           setLoading(false);
         });
+
     }
   }, [filters]);
 
@@ -63,7 +81,13 @@ function App() {
       <div >
         <div className="App-sidebar">
           <h1>Filters</h1>
-          <SideBar onFiltersChange={handleFiltersChange} />
+          <SideBar
+            onFiltersChange={handleFiltersChange}
+            levelOptions={levelOptions}
+            senderOptions={senderOptions}
+            topicOptions={topicOptions}
+            filters={filters}
+          />
         </div>
 
         <div className='App-logs'>

@@ -82,6 +82,25 @@ app.get('/api', async (req, res) => {
 });
 
 
+// Endpoint for fetching level, senderID and topic options
+app.get('/api/filters', async (req, res) => {
+    try {
+        const levels = await Log.distinct("level");
+        const senderIDs = await Log.distinct("idSender");
+        const topics = await Log.distinct("topic");
+
+        res.json({
+            levelOptions: levels,
+            senderOptions: senderIDs,
+            topicOptions: topics
+        });
+    } catch (error) {
+        console.error("Error fetching filter options:", error);
+        res.status(500).json({ message: "Error fetching filter options" });
+    }
+});
+
+
 
 app.listen(5000, () => {
     console.log('Server is running on port 5000');
