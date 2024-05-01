@@ -69,9 +69,9 @@ const LogsTable = ({ logs, format }) => {
                     Next
                 </button>
 
-                <select title='Items per page' value={itemsPerPage} onChange={handleItemsPerPageChange}>
+                <select value={itemsPerPage} onChange={handleItemsPerPageChange}>
                     <option value="16">Items per page</option>
-                    <option value="30">30</option>
+                    <option value="30">50</option>
                     <option value="100">100</option>
                     <option value="500">500</option>
                 </select>

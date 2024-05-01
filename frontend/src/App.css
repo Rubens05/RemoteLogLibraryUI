@@ -30,8 +30,7 @@
 
   .App-header {
     display: flex;
-    justify-content: center;
-    text-align: center;
+    justify-content: space-between;
     position: fixed;
     width: 100%;
     /* Position the header content and toggle button */
@@ -40,20 +39,40 @@
   .App-header h1 {
     color: #61dafb;
     border: none;
+    text-align: center;
     font-weight: bold;
     transition: background-color 0.2s;
   }
 
+
+  .App-header-name {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+  }
+
+  .App-header-buttonsdiv {
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 2.8rem;
+  }
+
   .App-header button {
-    justify-content: right;
     background-color: #61dafb;
     border: none;
-    margin: 0 1rem;
+    margin-left: 1rem;
     padding: 0.5rem 1rem;
     cursor: pointer;
     font-weight: bold;
     border-radius: 4px;
     transition: background-color 0.2s;
+  }
+
+  .App-header button:hover {
+    background-color: #4aaedf;
   }
 
 
@@ -81,6 +100,7 @@
     width: 275px;
     background-color: #062730;
     color: #fff;
+    margin-top: 0.17rem;
     padding: 1rem;
     transition: all 0.3s;
     position: fixed;
@@ -153,7 +173,7 @@
   /* Styles for LogsTable */
   .LogsTable {
     width: 100%;
-    border-collapse: separate;
+    border-collapse: collapse;
     margin-top: 0.45rem;
     background-color: #1c1c1c;
   }
