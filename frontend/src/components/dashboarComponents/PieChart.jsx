@@ -1,36 +1,39 @@
 import React from 'react';
-import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts';
 
-const MyPieChart = ({ logs }) => {
+const MyBarChart = ({ logs }) => {
+    // Procesamiento de datos igual que antes
     const data = logs.reduce((acc, log) => {
         const { level } = log;
         acc[level] = (acc[level] || 0) + 1;
         return acc;
     }, {});
 
-    const pieChartData = Object.keys(data).map(level => ({
+    // Preparación de los datos para el BarChart
+    const barChartData = Object.keys(data).map(level => ({
         name: level,
-        value: data[level],
+        count: data[level],
         color: getColorForLevel(level)
     }));
 
     return (
-        <PieChart width={400} height={400}>
-            <Pie
-                dataKey="value"
-                isAnimationActive={false}
-                data={pieChartData}
-                cx={150}
-                cy={170}
-                outerRadius={120}
-                label
-            >
-                {pieChartData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-            </Pie>
+        <BarChart
+            width={1400}
+            height={250}
+            data={barChartData}
+        >
+            <CartesianGrid strokeDasharray="6" />
+            <XAxis dataKey="name" stroke='white' strokeDasharray="6" />
+            <YAxis strokeDasharray="6" stroke='white' />
             <Tooltip />
-        </PieChart>
+            <Bar dataKey="count" fill="#8884d8" label={{ position: 'top' }}>
+                {
+                    barChartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))
+                }
+            </Bar>
+        </BarChart>
     );
 };
 
@@ -45,4 +48,4 @@ const getColorForLevel = (level) => {
     return colors[level] || '#808080';
 };
 
-export default MyPieChart;
+export default MyBarChart;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 
 const MyBarChart = ({ logs }) => {
     const data = logs.reduce((acc, log) => {
@@ -14,10 +14,10 @@ const MyBarChart = ({ logs }) => {
     }));
 
     return (
-        <BarChart width={500} height={300} data={barChartData}>
-            <CartesianGrid strokeDasharray="3" />
-            <XAxis dataKey="name" />
-            <YAxis />
+        <BarChart width={1400} height={250} data={barChartData}>
+            <CartesianGrid strokeDasharray="6" stroke='white' />
+            <XAxis dataKey="name" stroke='white' strokeDasharray="6" />
+            <YAxis strokeDasharray="6" stroke='white' />
             <Tooltip />
             <Bar dataKey="count" fill="#8884d8" />
         </BarChart>

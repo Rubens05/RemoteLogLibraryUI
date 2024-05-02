@@ -95,7 +95,7 @@ function DashboardPage() {
                             </div>)
                         : (backendData.logs.length === 0
                             ? (<div className="toggle-controls">
-                                <p>No results found</p>
+                                <h2>No results found</h2>
                             </div>)
                             : (<div >
                                 <div className="toggle-controls">
@@ -111,20 +111,19 @@ function DashboardPage() {
 
                                 </div>
 
-                                {/*Make enough room for the charts*/}
-
-                                <div className='dashboard-controls'>
+                                <div className="dashboard-controls">
                                     <PieChart logs={backendData.logs} />
+                                </div>
+                                <div className="dashboard-controls">
                                     <BarChart logs={backendData.logs} />
-
                                 </div>
-                                <div className='dashboard-controls'>
+                                <div className="dashboard-controls">
                                     <LineChart logs={backendData.logs} />
-
                                 </div>
+                            </div>
 
 
-                            </div>)
+                            )
                         )
                     }
                 </div>

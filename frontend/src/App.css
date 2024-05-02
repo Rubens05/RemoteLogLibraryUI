@@ -348,4 +348,56 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-top: 1rem;
+  }
+
+  /* Styles for the form*/
+  .contact-form-container {
+    max-width: 800px;
+    margin: 7rem auto;
+    padding: 20px;
+    border: 1px solid #61dafb;
+    box-shadow: 0 0 10px #61dafb;
+  }
+
+  .form-group {
+    margin-bottom: 10px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: white;
+    font-weight: bold;
+  }
+
+  .form-group input[type="text"],
+  .form-group input[type="email"],
+  .form-group input[type="number"],
+  .form-group input {
+    background-color: #464646;
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #61dafb;
+  }
+
+  .form-group input[type="message"],
+  .form-group input {
+    width: 100%;
+    padding: 50px;
+    border: 1px solid #61dafb;
+  }
+
+
+  .send-button {
+    background-color: #61dafb;
+    color: 61dafb;
+    font-weight: bold;
+    border: none;
+    padding: 10px 20px;
+    align-items: center;
+    text-align: center;
+    display: inline-block;
+    margin-top: 10px;
+    cursor: pointer;
   }

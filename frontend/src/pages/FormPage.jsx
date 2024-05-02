@@ -1,17 +1,12 @@
+import React from 'react';
+import FormComponent from '../components/FormComponent';
 import '../App.css';
-
 function FormPage() {
 
     return (
-        <div className='App'>
-
-            <div className="App-sidebar">
-
-                <div className="toggle-controls" >
-                    <h1>Form</h1>
-                </div>
-
-
+        <div className="App">
+            <div className="header">
+                <FormComponent />
             </div>
         </div>
     );
