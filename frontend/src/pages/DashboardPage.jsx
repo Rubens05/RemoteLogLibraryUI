@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import DashBoard from '../components/DashBoard';
 import SideBar from '../components/SideBar';
+import PieChart from '../components/dashboarComponents/PieChart';
+import LineChart from '../components/dashboarComponents/LineChart';
+import BarChart from '../components/dashboarComponents/BarChart';
 import '../App.css';
 
 function DashboardPage() {
     const [backendData, setBackendData] = useState({ logs: [] });
     const [loading, setLoading] = useState(false);
-    const [format, setFormat] = useState('default'); // New state for formatting
     const [levelOptions, setLevelOptions] = useState([]);
     const [senderOptions, setSenderOptions] = useState([]);
     const [topicOptions, setTopicOptions] = useState([]);
@@ -64,10 +65,6 @@ function DashboardPage() {
         setFilters(prev => ({ ...prev, ...newFilters }));
     };
 
-    // Function to toggle the format
-    const toggleFormat = () => {
-        setFormat(format === 'default' ? 'colored' : 'default');
-    };
 
 
     return (
@@ -114,7 +111,19 @@ function DashboardPage() {
 
                                 </div>
 
-                                <DashBoard logs={backendData.logs} />
+                                {/*Make enough room for the charts*/}
+
+                                <div className='dashboard-controls'>
+                                    <PieChart logs={backendData.logs} />
+                                    <BarChart logs={backendData.logs} />
+
+                                </div>
+                                <div className='dashboard-controls'>
+                                    <LineChart logs={backendData.logs} />
+
+                                </div>
+
+
                             </div>)
                         )
                     }

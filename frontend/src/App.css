@@ -341,3 +341,11 @@
   .timestamp-controls button:hover {
     background-color: #4aaedf;
   }
+
+  /* Styles for the dashboard*/
+
+  .dashboard-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
