@@ -8,7 +8,6 @@ function ContactForm() {
         age: '',
         subject: '',
         message: '',
-        otherField: '',
         otherInfo: ''
     });
 
@@ -20,10 +19,33 @@ function ContactForm() {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(formData);
-        // Aquí podrías añadir lógica para enviar los datos a un servidor
+        const formId = 'mayrvpbj';  // Sacar a .env
+        const url = `https://formspree.io/f/${formId}`;
+        const response = await fetch(url, {
+            method: 'POST',
+            body: JSON.stringify(formData),
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            alert('Thanks for your submission!');
+            setFormData({
+                name: '',
+                email: '',
+                subject: '',
+                message: '',
+                country: '',
+                age: '',
+                otherInfo: ''
+            });
+        } else {
+            alert('There was a problem with your submission. Please try again.');
+        }
     };
 
     return (
@@ -46,14 +68,14 @@ function ContactForm() {
                     <input type="number" id="age" name="age" value={formData.age} onChange={handleChange} />
                 </div>
                 <div className="form-group">
+                    <label htmlFor="otherInfo">Other info</label>
+                    <input type="text" id="otherInfo" name="otherInfo" value={formData.otherInfo} onChange={handleChange} />
+                </div>
+                <div className="form-group">
                     <label htmlFor="subject">Subject*</label>
                     <input type="text" id="subject" name="subject" value={formData.subject} onChange={handleChange} required />
                 </div>
 
-                <div className="form-group">
-                    <label htmlFor="otherInfo">Other info</label>
-                    <input type="text" id="otherInfo" name="otherInfo" value={formData.otherInfo} onChange={handleChange} />
-                </div>
                 <div className="form-group">
                     <label htmlFor="message">Message*</label>
                     <input id="message" name="message" value={formData.message} onChange={handleChange} required />

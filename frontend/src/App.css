@@ -375,7 +375,7 @@
   .form-group input[type="email"],
   .form-group input[type="number"],
   .form-group input {
-    background-color: #464646;
+    background-color: #c9c9c9;
     width: 100%;
     padding: 8px;
     border: 1px solid #61dafb;

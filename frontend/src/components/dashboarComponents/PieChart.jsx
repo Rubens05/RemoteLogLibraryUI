@@ -20,13 +20,14 @@ const MyBarChart = ({ logs }) => {
         <BarChart
             width={1400}
             height={250}
+            margin={{ top: 20 }}
             data={barChartData}
         >
             <CartesianGrid strokeDasharray="6" />
             <XAxis dataKey="name" stroke='white' strokeDasharray="6" />
             <YAxis strokeDasharray="6" stroke='white' />
             <Tooltip />
-            <Bar dataKey="count" fill="#8884d8" label={{ position: 'top' }}>
+            <Bar dataKey="count" label={{ position: 'top' }}>
                 {
                     barChartData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
