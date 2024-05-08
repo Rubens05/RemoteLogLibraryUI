@@ -21,7 +21,7 @@ function ContactForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const formId = 'mayrvpbj';  // Sacar a .env
+        const formId = 'mayrvpbj';  // TODO Sacar a .env
         const url = `https://formspree.io/f/${formId}`;
         const response = await fetch(url, {
             method: 'POST',

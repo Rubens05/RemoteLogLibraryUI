@@ -2,14 +2,13 @@ import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts';
 
 const MyBarChart = ({ logs }) => {
-    // Procesamiento de datos igual que antes
+
     const data = logs.reduce((acc, log) => {
         const { level } = log;
         acc[level] = (acc[level] || 0) + 1;
         return acc;
     }, {});
 
-    // Preparación de los datos para el BarChart
     const barChartData = Object.keys(data).map(level => ({
         name: level,
         count: data[level],

@@ -49,6 +49,7 @@ function HomePage() {
                     setLoading(false);
                 });
         } else {
+            console.log("Fetching logs between", startDate, "and", endDate);
             const queryString = `startDate=${startDate.toISOString().split('T')[0]}&endDate=${endDate.toISOString().split('T')[0]}&level=${level}&senderID=${senderID}&topic=${topic}&message=${message}&hourStart=${hourStart}&hourEnd=${hourEnd}`;
             fetch(`/api?${queryString}`)
                 .then(response => response.json())
@@ -100,21 +101,22 @@ function HomePage() {
                         : (backendData.logs.length === 0
                             ? (
                                 <div className="toggle-controls">
-                                    <p>No results found</p>
+                                    <h2>No results found</h2>
                                 </div>)
                             : (<div >
                                 <div className="toggle-controls">
                                     {filters.startDate && filters.endDate
-                                        // TODO MAKE THE STYLES If the start and end date are set
+                                        // If the start and end date are set
                                         ? (filters.startDate.toISOString().split('T')[0] === filters.endDate.toISOString().split('T')[0]
                                             // Show the date if both dates are the same
-                                            ? (<h2>FIXME Showing logs of the day {filters.endDate.toISOString().split('T')[0]}</h2>)
+
+                                            ? (<h2>Showing logs of the day {backendData.logs[0].timestamp.split('T')[0]}</h2>)
                                             // Show the date range if both dates are set
-                                            : (<h2>FIXME Showing logs between {filters.startDate.toISOString().split('T')[0]} and {filters.endDate.toISOString().split('T')[0]}</h2>))
+                                            : (<h2>Showing logs between latest found: {backendData.logs[backendData.logs.length - 1].timestamp.split('T')[0]} and earliest found: {backendData.logs[0].timestamp.split('T')[0]} </h2>))
                                         // Show all logs if no date range is set
                                         : (<h2>Showing all logs</h2>)}
 
-                                    <button title='Change logs color' onClick={toggleFormat}>Toggle Format</button> {/* Toggle button */}
+                                    <button title='Change logs color' onClick={toggleFormat}>Toggle Format</button>
                                 </div>
                                 <LogsTable logs={backendData.logs} format={format} />
                             </div>)

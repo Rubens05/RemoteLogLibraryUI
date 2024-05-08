@@ -35,12 +35,24 @@ app.get('/api', async (req, res) => {
     console.log("Query params:", req.query);
     try {
         const query = {};
-        console.log(query);
         if (startDate && endDate) {
-            const start = new Date(startDate);
-            const end = new Date(endDate);
+            let start = new Date(startDate);
+            let end = new Date(endDate);
             start.setDate(start.getDate() + 1);
             end.setDate(end.getDate() + 2);
+            console.log("Start date:", start);
+            console.log("End date:", end);
+
+            if ((startDate === endDate) && (hourStart !== '0' || hourEnd != '23')) {
+                console.log("Setting hours");
+                console.log("Hour start:", hourStart);
+                console.log("Hour end:", hourEnd);
+                start.setHours(hourStart, 0, 0, 0);
+                end.setHours(hourEnd, 59, 59, 999);
+
+                console.log("Start date with hours:", start);
+                console.log("End date with hours:", end);
+            }
 
             query.timestamp = { $gte: start, $lte: end };
             console.log("Querying logs between", start, "and", end);
@@ -64,16 +76,7 @@ app.get('/api', async (req, res) => {
         }
 
 
-        // TODO Iplement the hour range filter
-        // if (hourStart !== 0 || hourEnd != 23) {
-        //     query.timestamp = { ...query.timestamp, $gte: new Date(0, 0, 0, hourStart), $lte: new Date(0, 0, 0, hourEnd) };
-        //     console.log("Querying logs between ", startDate, "and", endDate, " and the range in hours", hourStart, "and", hourEnd);
-        // }
-
-
-
-
-        const logs = await Log.find(query).sort({ timestamp: -1 })/*.limit(500)*/; //Fix limit
+        const logs = await Log.find(query).sort({ timestamp: -1 })/*.limit(500)*/; //Adjust logs limit
         console.log("logs", logs)
         res.json({ logs });
     } catch (error) {

@@ -2,18 +2,22 @@ import React, { useState } from 'react';
 import DateRangeFilter from './DateRangeFilter';
 
 const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, filters }) => {
-    const { startDate, endDate } = filters;
     const [level, setLevel] = useState('');
     const [senderID, setSenderID] = useState('');
     const [topic, setTopic] = useState('');
     const [message, setMessage] = useState('');
     const [hourStart, setHourStart] = useState(0);
     const [hourEnd, setHourEnd] = useState(23);
-    const [dateFilterKey, setDateFilterKey] = useState(0); // Estado para manejar la clave del DateRangeFilter
+    const [dateFilterKey, setDateFilterKey] = useState(0);
 
     // Handler for date range changes from DateRangeFilter
     const handleDateRangeChange = (start, end) => {
         onFiltersChange({ startDate: start, endDate: end });
+        if (start !== end) {
+            setHourStart(0);
+            setHourEnd(23);
+            onFiltersChange({ startDate: start, endDate: end, hourStart: 0, hourEnd: 23 });
+        }
     };
 
     // Handle changes in other filters (hourStart, hourEnd, Level...) and notify the parent component
@@ -72,7 +76,6 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
     };
 
     const clearFilters = () => {
-        // Restablecer estados locales
         setLevel('');
         setSenderID('');
         setTopic('');
@@ -81,7 +84,6 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
         setHourEnd(23);
         setDateFilterKey(prevKey => prevKey + 1);
 
-        // Restablecer filtros en el componente padre
         onFiltersChange({
             startDate: null,
             endDate: null,
@@ -103,8 +105,8 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
                 <DateRangeFilter key={dateFilterKey} // Key to force re-render of DateRangeFilter
                     onDateRangeChange={handleDateRangeChange} />
             </div>
-            {console.log(startDate, endDate)}
-            {(startDate && endDate && (startDate.toISOString().split('T')[0] === filters.endDate.toISOString().split('T')[0]))
+            {console.log(filters.startDate, filters.endDate)}
+            {(filters.startDate && filters.endDate && (filters.startDate.toISOString().split('T')[0] === filters.endDate.toISOString().split('T')[0]))
                 ? (<div>
                     <div>
                         <label htmlFor='hourStart'>Start Hour: </label>
@@ -120,11 +122,11 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
                 : (<div>
                     <div>
                         <label htmlFor='hourStart'>Start Hour: </label>
-                        <input type='number' id='hourStart' name='hourStart' min='0' max='23' value={hourStart} onChange={handleHourStartChange} disabled={true} />
+                        <input type='text' id='hourStart' name='hourStart' value="Select single day" disabled={true} />
                     </div>
                     <div>
                         <label htmlFor="hourEnd">End Hour:</label>
-                        <input type="number" id="hourEnd" name="hourEnd" min="0" max="23" value={hourEnd} onChange={handleHourEndChange} disabled={true} />
+                        <input type="text" id="hourEnd" name="hourEnd" value="Select single day" disabled={true} />
                     </div>
                 </div>)
             }
@@ -162,7 +164,7 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
 
             <div className="pagination-controls">
 
-                <button onClick={clearFilters}>Clear filters</button>                {/* TODO FIX CLEAR BUTTON  */}
+                <button onClick={clearFilters}>Clear filters</button>
 
             </div>
 

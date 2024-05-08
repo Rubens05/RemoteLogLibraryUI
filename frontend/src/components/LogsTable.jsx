@@ -13,8 +13,8 @@ const LogsTable = ({ logs, format }) => {
     };
 
     const handleItemsPerPageChange = (event) => {
-        setItemsPerPage(Number(event.target.value));  // Actualizar el estado con la nueva selección
-        setCurrentPage(0);  // Opcional: Volver a la primera página al cambiar el número de ítems por página
+        setItemsPerPage(Number(event.target.value));
+        setCurrentPage(0);
     };
 
     // Use a class based on the log level if format is 'colored', otherwise use a default class
@@ -40,7 +40,7 @@ const LogsTable = ({ logs, format }) => {
                             <div className="timestamp-controls">
                                 Timestamp
                                 <button>
-                                    UTC-Local TODO
+                                    UTC-Local
                                 </button>
                             </div>
                         </th>

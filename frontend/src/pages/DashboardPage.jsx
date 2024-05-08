@@ -100,14 +100,14 @@ function DashboardPage() {
                             : (<div >
                                 <div className="toggle-controls">
                                     {filters.startDate && filters.endDate
-                                        // TODO MAKE THE STYLES If the start and end date are set
+                                        // If the start and end date are set
                                         ? (filters.startDate.toISOString().split('T')[0] === filters.endDate.toISOString().split('T')[0]
                                             // Show the date if both dates are the same
-                                            ? (<h2>FIXME Dashboarding logs of the day {filters.endDate.toISOString().split('T')[0]}</h2>)
+                                            ? (<h2>Dashboarding logs of the day {backendData.logs[0].timestamp.split('T')[0]}</h2>)
                                             // Show the date range if both dates are set
-                                            : (<h2>FIXME Dashboarding logs between {filters.startDate.toISOString().split('T')[0]} and {filters.endDate.toISOString().split('T')[0]}</h2>))
+                                            : (<h2>Dashboarding logs between latest found: {backendData.logs[backendData.logs.length - 1].timestamp.split('T')[0]} and earliest found: {backendData.logs[0].timestamp.split('T')[0]}</h2>))
                                         // Show all logs if no date range is set
-                                        : (<h2>Showing all logs</h2>)}
+                                        : (<h2>Dashboarding all logs</h2>)}
 
                                 </div>
 
