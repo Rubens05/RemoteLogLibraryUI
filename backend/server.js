@@ -36,26 +36,31 @@ app.get('/api', async (req, res) => {
     try {
         const query = {};
         if (startDate && endDate) {
-            let start = new Date(startDate);
-            let end = new Date(endDate);
-            start.setDate(start.getDate() + 1);
-            end.setDate(end.getDate() + 2);
-            console.log("Start date:", start);
-            console.log("End date:", end);
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+
+            // Ajustar días si es necesario
+            start.setUTCDate(start.getUTCDate() + 1);
+            end.setUTCDate(end.getUTCDate() + 2);
+
+            console.log("Start date:", start.toISOString());
+            console.log("End date:", end.toISOString());
 
             if ((startDate === endDate) && (hourStart !== '0' || hourEnd != '23')) {
                 console.log("Setting hours");
                 console.log("Hour start:", hourStart);
                 console.log("Hour end:", hourEnd);
-                start.setHours(hourStart, 0, 0, 0);
-                end.setHours(hourEnd, 59, 59, 999);
 
-                console.log("Start date with hours:", start);
-                console.log("End date with hours:", end);
+                start.setUTCHours(hourStart, 0, 0, 0);
+                end.setUTCDate(end.getUTCDate() - 1);
+                end.setUTCHours(hourEnd, 0, 0, 0);
+
+                console.log("Start date with hours:", start.toISOString());
+                console.log("End date with hours:", end.toISOString());
             }
 
             query.timestamp = { $gte: start, $lte: end };
-            console.log("Querying logs between", start, "and", end);
+            console.log("Querying logs between", start.toISOString(), "and", end.toISOString());
         }
 
         if (level !== '') {
