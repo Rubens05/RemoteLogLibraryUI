@@ -10,7 +10,6 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
     const [hourEnd, setHourEnd] = useState(23);
     const [dateFilterKey, setDateFilterKey] = useState(0);
 
-    // Handler for date range changes from DateRangeFilter
     const handleDateRangeChange = (start, end) => {
         onFiltersChange({ startDate: start, endDate: end });
         if (start !== end) {
@@ -20,18 +19,36 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
         }
     };
 
-    // Handle changes in other filters (hourStart, hourEnd, Level...) and notify the parent component
     const handleHourStartChange = (e) => {
+
+        // Hadle in case user remove the text in the input
+        if (e.target.value === '') {
+            setHourStart(0);
+            onFiltersChange({ hourStart: 0 });
+            return;
+        }
+
         const startVal = Math.min(parseInt(e.target.value, 10), hourEnd - 1);
         setHourStart(startVal);
         onFiltersChange({ hourStart: startVal });
+
     };
 
     const handleHourEndChange = (e) => {
+
+        // Hadle in case user remove the text in the input
+        if (e.target.value === '') {
+            setHourEnd(23);
+            onFiltersChange({ hourEnd: 23 });
+            return;
+        }
+
         const endVal = Math.max(parseInt(e.target.value, 10), hourStart + 1);
         setHourEnd(endVal);
         onFiltersChange({ hourEnd: endVal });
+
     };
+
 
     const handleLevelChange = (e) => {
         const newLevel = e.target.value;
@@ -51,24 +68,22 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
         onFiltersChange({ topic: newTopic });
     };
 
-    // Handle message changes
     const handleMessageChange = (event) => {
         setMessage(event.target.value);
     };
 
-    // Handle Enter key press
     const handleKeyDown = (event) => {
         if (event.key === 'Enter') {
             submitMessageSearch();
         }
     };
 
-    // Handle message blur
     const handleBlur = () => {
         submitMessageSearch();
     };
 
-    // Submit message search
+
+
     const submitMessageSearch = () => {
 
         onFiltersChange({ message: message.trim() });
@@ -110,11 +125,21 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
                 ? (<div>
                     <div>
                         <label htmlFor='hourStart'>Start Hour: </label>
-                        <input type='number' id='hourStart' name='hourStart' min='0' max='23' value={hourStart} onChange={handleHourStartChange} disabled={false} />
+                        <input type='number' id='hourStart' name='hourStart' min='0' max='23' value={hourStart} disabled={false}
+                            onChange={handleHourStartChange}
+                        />
+                        {console.log(hourStart)}
+
+
+
                     </div>
                     <div>
                         <label htmlFor="hourEnd">End Hour:</label>
-                        <input type="number" id="hourEnd" name="hourEnd" min="0" max="23" value={hourEnd} onChange={handleHourEndChange} disabled={false} />
+                        <input type="number" id="hourEnd" name="hourEnd" min="0" max="23" value={hourEnd} disabled={false}
+                            onChange={handleHourEndChange}
+                        />
+                        {console.log(hourEnd)}
+
                     </div>
                 </div>
 
