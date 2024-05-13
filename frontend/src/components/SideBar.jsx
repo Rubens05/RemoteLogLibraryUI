@@ -8,6 +8,7 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
     const [message, setMessage] = useState('');
     const [hourStart, setHourStart] = useState(0);
     const [hourEnd, setHourEnd] = useState(23);
+
     const [dateFilterKey, setDateFilterKey] = useState(0);
 
     const handleDateRangeChange = (start, end) => {
@@ -19,34 +20,30 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
         }
     };
 
+
+
     const handleHourStartChange = (e) => {
-
-        // Hadle in case user remove the text in the input
-        if (e.target.value === '') {
-            setHourStart(0);
-            onFiltersChange({ hourStart: 0 });
-            return;
-        }
-
-        const startVal = Math.min(parseInt(e.target.value, 10), hourEnd - 1);
-        setHourStart(startVal);
-        onFiltersChange({ hourStart: startVal });
-
+        setHourStart(e.target.value);
     };
 
     const handleHourEndChange = (e) => {
+        setHourEnd(e.target.value);
+    };
 
-        // Hadle in case user remove the text in the input
-        if (e.target.value === '') {
-            setHourEnd(23);
-            onFiltersChange({ hourEnd: 23 });
-            return;
+    const submitHourStart = () => {
+        const hour = parseInt(hourStart, 10);
+        if (!isNaN(hour) && hour >= 0 && hour <= 23) {
+            setHourStart(hour);
+            onFiltersChange({ hourStart: hour });
         }
+    };
 
-        const endVal = Math.max(parseInt(e.target.value, 10), hourStart + 1);
-        setHourEnd(endVal);
-        onFiltersChange({ hourEnd: endVal });
-
+    const submitHourEnd = () => {
+        const hour = parseInt(hourEnd, 10);
+        if (!isNaN(hour) && hour >= 0 && hour <= 23) {
+            setHourEnd(hour);
+            onFiltersChange({ hourEnd: hour });
+        }
     };
 
 
@@ -127,6 +124,8 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
                         <label htmlFor='hourStart'>Start Hour: </label>
                         <input type='number' id='hourStart' name='hourStart' min='0' max='23' value={hourStart} disabled={false}
                             onChange={handleHourStartChange}
+                            onKeyDown={(e) => { if (e.key === 'Enter') submitHourStart(); }}
+                            onBlur={submitHourStart}
                         />
                         {console.log(hourStart)}
 
@@ -137,6 +136,8 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
                         <label htmlFor="hourEnd">End Hour:</label>
                         <input type="number" id="hourEnd" name="hourEnd" min="0" max="23" value={hourEnd} disabled={false}
                             onChange={handleHourEndChange}
+                            onKeyDown={(e) => { if (e.key === 'Enter') submitHourEnd(); }}
+                            onBlur={submitHourEnd}
                         />
                         {console.log(hourEnd)}
 

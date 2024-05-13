@@ -1,8 +1,60 @@
 import React, { useState } from 'react';
-
 const LogsTable = ({ logs, format }) => {
     const [currentPage, setCurrentPage] = useState(0);
     const [itemsPerPage, setItemsPerPage] = useState(16);
+    const [useLocalTime, setUseLocalTime] = useState(false);
+    const [sortDirection, setSortDirection] = useState('asc');
+    const [columnWidths, setColumnWidths] = useState({
+        level: 100,
+        message: 600,
+        senderID: 70,
+        topic: 70,
+    });
+
+    const [visibleColumns, setVisibleColumns] = useState({
+        level: true,
+        message: true,
+        senderID: true,
+        topic: true,
+        timestamp: true
+    });
+
+    const toggleColumnVisibility = (column) => {
+        setVisibleColumns(prev => ({
+            ...prev,
+            [column]: !prev[column]
+        }));
+    };
+
+    const handleMouseDown = (colKey) => (event) => {
+        const startX = event.clientX;
+        const startWidth = columnWidths[colKey];
+
+        const handleMouseMove = (e) => {
+            const newWidth = Math.max(100, startWidth + (e.clientX - startX));
+            setColumnWidths(prev => ({ ...prev, [colKey]: newWidth }));
+        };
+
+        const handleMouseUp = () => {
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', handleMouseUp);
+        };
+
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+    };
+
+    const sortedLogs = logs.sort((a, b) => {
+        if (sortDirection === 'asc') {
+            return new Date(a.timestamp) - new Date(b.timestamp);
+        } else {
+            return new Date(b.timestamp) - new Date(a.timestamp);
+        }
+    });
+
+    const toggleSortDirection = () => {
+        setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    };
 
     const paginatedLogs = logs.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
 
@@ -17,49 +69,76 @@ const LogsTable = ({ logs, format }) => {
         setCurrentPage(0);
     };
 
-    // Use a class based on the log level if format is 'colored', otherwise use a default class
-    const getRowClass = (log) => {
-        return format === 'colored' ? getLogLevelClass(log.level) : '';
+    const toggleTimeFormat = () => {
+        setUseLocalTime(!useLocalTime);
     };
 
-    // Function to return the class based on the log level
-    const getLogLevelClass = (level) => `log-level-${level}`;
+    const getRowClass = (log) => {
+        return format === 'colored' ? `log-level-${log.level}` : '';
+    };
+
+    const formatTimestamp = (timestamp) => {
+        return useLocalTime ? new Date(timestamp).toLocaleString() : new Date(timestamp).toUTCString();
+    };
 
     return (
         <div>
+
             <table className="LogsTable">
+
                 <thead>
                     <tr>
-                        <th>Level</th>
-                        <th>Message</th>
-                        <th>Sender ID</th>
-                        <th>Topic</th>
-                        <th>
-
-                            {/*TODO button for change time format*/}
-                            <div className="timestamp-controls">
-                                Timestamp
-                                <button>
-                                    UTC-Local
-                                </button>
-                            </div>
-                        </th>
+                        {visibleColumns.level && <th >Level</th>}
+                        {visibleColumns.message && <th>Message</th>}
+                        {visibleColumns.senderID && <th>Sender ID</th>}
+                        {visibleColumns.topic && <th>Topic</th>}
+                        {visibleColumns.timestamp &&
+                            <th className="th" onClick={toggleSortDirection} style={{ cursor: 'pointer' }}>
+                                Timestamp {sortDirection === 'asc' ? '↑' : '↓'}
+                            </th>}
                     </tr>
                 </thead>
                 <tbody>
-                    {paginatedLogs.map((log, index) => (
-                        <tr key={index}>
-                            <td className={getRowClass(log)}>{log.level}</td>
-                            <td className={getRowClass(log)}>{log.message}</td>
-                            <td className={getRowClass(log)}>{log.idSender}</td>
-                            <td className={getRowClass(log)}>{log.topic}</td>
-                            <td className={getRowClass(log)}>{log.timestamp}</td>
+                    {paginatedLogs.map((log) => (
+                        <tr key={log.id}>
+                            {visibleColumns.level && <td className={`${getRowClass(log)} td ellipsis`}>{log.level}</td>}
+                            {visibleColumns.message && <td className={`${getRowClass(log)} td ellipsis`}>{log.message}</td>}
+                            {visibleColumns.senderID && <td className={`${getRowClass(log)} td ellipsis`}>{log.idSender}</td>}
+                            {visibleColumns.topic && <td className={`${getRowClass(log)} td ellipsis`}>{log.topic}</td>}
+                            {visibleColumns.timestamp && <td className={`${getRowClass(log)} td ellipsis dateCell`}>{formatTimestamp(log.timestamp)}</td>}
                         </tr>
                     ))}
-                </tbody>
-            </table>
-            <div className="pagination-controls">
 
+                </tbody>
+
+
+
+            </table>
+
+            <table className="LogsCheckbox">
+
+                <thead>
+                    <tr>
+                        {Object.keys(visibleColumns).map((column) => (
+                            <th key={column}>
+                                <input
+                                    type="checkbox"
+                                    checked={visibleColumns[column]}
+                                    onChange={() => toggleColumnVisibility(column)}
+                                    style={{ marginRight: '5px' }}
+                                />
+                                {column.charAt(0).toUpperCase() + column.slice(1)}
+
+                            </th>
+                        ))}
+                    </tr>
+                </thead>
+            </table>
+
+            <div className="pagination-controls">
+                <button onClick={() => handlePageChange(0)} disabled={currentPage === 0}>
+                    First
+                </button>
                 <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 0}>
                     Previous
                 </button>
@@ -67,16 +146,21 @@ const LogsTable = ({ logs, format }) => {
                 <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === Math.ceil(logs.length / itemsPerPage) - 1}>
                     Next
                 </button>
-
+                <button onClick={() => handlePageChange(Math.ceil(logs.length / itemsPerPage) - 1)} disabled={currentPage === Math.ceil(logs.length / itemsPerPage) - 1}>
+                    Last
+                </button>
                 <select value={itemsPerPage} onChange={handleItemsPerPageChange}>
-                    <option value="16">Items per page</option>
-                    <option value="30">50</option>
+                    <option value="16">16</option>
+                    <option value="50">50</option>
                     <option value="100">100</option>
                     <option value="500">500</option>
                 </select>
+                <button onClick={toggleTimeFormat}>
+                    {useLocalTime ? "Switch to UTC" : "Switch to Local"}
+                </button>
             </div>
         </div>
     );
 };
 
-export default LogsTable; 
+export default LogsTable;

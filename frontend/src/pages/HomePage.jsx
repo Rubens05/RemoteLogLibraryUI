@@ -49,7 +49,8 @@ function HomePage() {
                     setLoading(false);
                 });
         } else {
-            const queryString = `startDate=${startDate.toISOString().split('T')[0]}&endDate=${endDate.toISOString().split('T')[0]}&level=${level}&senderID=${senderID}&topic=${topic}&message=${message}&hourStart=${hourStart}&hourEnd=${hourEnd}`;
+            const queryString = `startDate=${startDate.toISOString().split('T')[0]}&endDate=${endDate.toISOString().split('T')[0]}
+            &level=${level}&senderID=${senderID}&topic=${topic}&message=${message}&hourStart=${hourStart}&hourEnd=${hourEnd}`;
             fetch(`/api?${queryString}`)
                 .then(response => response.json())
                 .then(data => {
@@ -111,7 +112,8 @@ function HomePage() {
 
                                             ? (<h2>Showing logs of the day {backendData.logs[0].timestamp.split('T')[0]}</h2>)
                                             // Show the date range if both dates are set
-                                            : (<h2>Showing logs between latest found: {backendData.logs[backendData.logs.length - 1].timestamp.split('T')[0]} and earliest found: {backendData.logs[0].timestamp.split('T')[0]} </h2>))
+                                            : (<h2>Showing logs between latest found: {backendData.logs[backendData.logs.length - 1].timestamp.split('T')[0]}
+                                                and earliest found: {backendData.logs[0].timestamp.split('T')[0]} </h2>))
                                         // Show all logs if no date range is set
                                         : (<h2>Showing all logs</h2>)}
 
