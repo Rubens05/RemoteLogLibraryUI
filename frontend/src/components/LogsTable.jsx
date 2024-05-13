@@ -85,25 +85,7 @@ const LogsTable = ({ logs, format }) => {
     return (
         <div>
 
-            <table className="LogsCheckbox">
 
-                <thead>
-                    <tr>
-                        {Object.keys(visibleColumns).map((column) => (
-                            <th key={column}>
-                                <input
-                                    type="checkbox"
-                                    checked={visibleColumns[column]}
-                                    onChange={() => toggleColumnVisibility(column)}
-                                    style={{ marginRight: '5px' }}
-                                />
-                                {column.charAt(0).toUpperCase() + column.slice(1)}
-
-                            </th>
-                        ))}
-                    </tr>
-                </thead>
-            </table>
             <table className="LogsTable">
 
                 <thead>
@@ -149,6 +131,25 @@ const LogsTable = ({ logs, format }) => {
 
             </table>
 
+            <table className="LogsCheckbox">
+
+                <thead>
+                    <tr>
+                        {Object.keys(visibleColumns).map((column) => (
+                            <th key={column}>
+                                <input
+                                    type="checkbox"
+                                    checked={visibleColumns[column]}
+                                    onChange={() => toggleColumnVisibility(column)}
+                                    style={{ marginRight: '5px' }}
+                                />
+                                {column.charAt(0).toUpperCase() + column.slice(1)}
+
+                            </th>
+                        ))}
+                    </tr>
+                </thead>
+            </table>
 
 
             <div className="pagination-controls">

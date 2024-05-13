@@ -112,7 +112,7 @@ function HomePage() {
 
                                             ? (<h2>Showing logs of the day {backendData.logs[0].timestamp.split('T')[0]}</h2>)
                                             // Show the date range if both dates are set
-                                            : (<h2>Showing logs between latest found: {backendData.logs[backendData.logs.length - 1].timestamp.split('T')[0]}
+                                            : (<h2>Showing logs between latest found: {backendData.logs[backendData.logs.length - 1].timestamp.split('T')[0] + " "}
                                                 and earliest found: {backendData.logs[0].timestamp.split('T')[0]} </h2>))
                                         // Show all logs if no date range is set
                                         : (<h2>Showing all logs</h2>)}
