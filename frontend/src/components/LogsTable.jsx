@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
+
 const LogsTable = ({ logs, format }) => {
     const [currentPage, setCurrentPage] = useState(0);
     const [itemsPerPage, setItemsPerPage] = useState(16);
     const [useLocalTime, setUseLocalTime] = useState(false);
     const [sortDirection, setSortDirection] = useState('asc');
     const [columnWidths, setColumnWidths] = useState({
-        level: 100,
+        level: 300,
         message: 600,
         senderID: 70,
         topic: 70,
@@ -84,37 +85,6 @@ const LogsTable = ({ logs, format }) => {
     return (
         <div>
 
-            <table className="LogsTable">
-
-                <thead>
-                    <tr>
-                        {visibleColumns.level && <th >Level</th>}
-                        {visibleColumns.message && <th>Message</th>}
-                        {visibleColumns.senderID && <th>Sender ID</th>}
-                        {visibleColumns.topic && <th>Topic</th>}
-                        {visibleColumns.timestamp &&
-                            <th className="th" onClick={toggleSortDirection} style={{ cursor: 'pointer' }}>
-                                Timestamp {sortDirection === 'asc' ? '↑' : '↓'}
-                            </th>}
-                    </tr>
-                </thead>
-                <tbody>
-                    {paginatedLogs.map((log) => (
-                        <tr key={log.id}>
-                            {visibleColumns.level && <td className={`${getRowClass(log)} td ellipsis`}>{log.level}</td>}
-                            {visibleColumns.message && <td className={`${getRowClass(log)} td ellipsis`}>{log.message}</td>}
-                            {visibleColumns.senderID && <td className={`${getRowClass(log)} td ellipsis`}>{log.idSender}</td>}
-                            {visibleColumns.topic && <td className={`${getRowClass(log)} td ellipsis`}>{log.topic}</td>}
-                            {visibleColumns.timestamp && <td className={`${getRowClass(log)} td ellipsis dateCell`}>{formatTimestamp(log.timestamp)}</td>}
-                        </tr>
-                    ))}
-
-                </tbody>
-
-
-
-            </table>
-
             <table className="LogsCheckbox">
 
                 <thead>
@@ -134,6 +104,52 @@ const LogsTable = ({ logs, format }) => {
                     </tr>
                 </thead>
             </table>
+            <table className="LogsTable">
+
+                <thead>
+                    <tr>
+                        {Object.entries(visibleColumns).filter(([_, visible]) => visible).map(([column]) => (
+                            <th key={column} style={{ width: `${columnWidths[column]}px`, position: 'relative' }}>
+                                {column.charAt(0).toUpperCase() + column.slice(1)}
+
+                                {column === 'timestamp' && (
+                                    <span onClick={toggleSortDirection} style={{ cursor: 'pointer', position: 'relative' }}>
+                                        {useLocalTime ? " Local " : " UTC "}
+                                        {sortDirection === 'asc' ? ' ↑' : ' ↓'}
+                                    </span>
+                                )}
+
+                                {column !== 'timestamp' && (<span
+                                    className="resize-handle"
+                                    onMouseDown={handleMouseDown(column)}
+                                    style={{ cursor: 'ew-resize', position: 'absolute', right: '0', width: '10px', top: '0', bottom: '0' }}
+                                />)}
+
+
+                            </th>
+                        ))}
+                    </tr>
+                </thead>
+
+
+                <tbody>
+                    {paginatedLogs.map((log) => (
+                        <tr key={log.id}>
+                            {visibleColumns.level && <td className={`${getRowClass(log)} td ellipsis`}>{log.level}</td>}
+                            {visibleColumns.message && <td className={`${getRowClass(log)} td ellipsis`}>{log.message}</td>}
+                            {visibleColumns.senderID && <td className={`${getRowClass(log)} td ellipsis`}>{log.idSender}</td>}
+                            {visibleColumns.topic && <td className={`${getRowClass(log)} td ellipsis`}>{log.topic}</td>}
+                            {visibleColumns.timestamp && <td className={`${getRowClass(log)} td ellipsis dateCell`}>{formatTimestamp(log.timestamp)}</td>}
+                        </tr>
+                    ))}
+
+                </tbody>
+
+
+
+            </table>
+
+
 
             <div className="pagination-controls">
                 <button onClick={() => handlePageChange(0)} disabled={currentPage === 0}>

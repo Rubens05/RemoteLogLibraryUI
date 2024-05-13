@@ -209,19 +209,25 @@
     text-overflow: ellipsis;
   }
 
-  .th-draggable {
-    position: relative;
-    user-select: none;
-  }
 
-  .drag-handle {
+
+
+  .resize-handle {
     position: absolute;
     right: 0;
     top: 0;
     bottom: 0;
-    width: 5px;
-    cursor: col-resize;
-    background-color: #ccc;
+    width: 10px;
+    user-select: none;
+    cursor: ew-resize;
+    background-color: rgba(255, 255, 255, 0.2);
+    /* Semi-transparent to indicate draggable area */
+    transition: background-color 0.2s;
+  }
+
+  .resize-handle:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+    /* More visible when hovering */
   }
 
   .LogsTable tr:nth-child(even) {
