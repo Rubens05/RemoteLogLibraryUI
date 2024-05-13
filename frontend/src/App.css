@@ -173,7 +173,7 @@
   /* Styles for LogsTable */
   .LogsTable {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
     margin-top: 0.45rem;
     background-color: #1c1c1c;
   }
