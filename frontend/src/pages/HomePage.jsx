@@ -20,8 +20,8 @@ function HomePage() {
         senderID: '',
         topic: '',
         message: '',
-        hourStart: 0, // default 00
-        hourEnd: 23 // default 23
+        hourStart: '00:00', // default 00
+        hourEnd: '23:59' // default 23
     });
 
     // Initial fetch to get the filter options

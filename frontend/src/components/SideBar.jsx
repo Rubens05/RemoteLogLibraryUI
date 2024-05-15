@@ -6,45 +6,35 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
     const [senderID, setSenderID] = useState('');
     const [topic, setTopic] = useState('');
     const [message, setMessage] = useState('');
-    const [hourStart, setHourStart] = useState(0);
-    const [hourEnd, setHourEnd] = useState(23);
-
+    const [hourStart, setHourStart] = useState("00:00");
+    const [hourEnd, setHourEnd] = useState("23:59");
     const [dateFilterKey, setDateFilterKey] = useState(0);
 
     const handleDateRangeChange = (start, end) => {
         onFiltersChange({ startDate: start, endDate: end });
         if (start !== end) {
-            setHourStart(0);
-            setHourEnd(23);
-            onFiltersChange({ startDate: start, endDate: end, hourStart: 0, hourEnd: 23 });
+            setHourStart("00:00");
+            setHourEnd("23:59");
+            onFiltersChange({ startDate: start, endDate: end, hourStart: "00:00", hourEnd: "23:59" });
         }
     };
 
 
 
-    const handleHourStartChange = (e) => {
-        setHourStart(e.target.value);
-    };
-
-    const handleHourEndChange = (e) => {
-        setHourEnd(e.target.value);
-    };
-
-    const submitHourStart = () => {
-        const hour = parseInt(hourStart, 10);
-        if (!isNaN(hour) && hour >= 0 && hour <= 23) {
-            setHourStart(hour);
-            onFiltersChange({ hourStart: hour });
+    const handleTimeChange = (e, type) => {
+        const time = e.target.value;
+        if (type === 'start') {
+            setHourStart(time);
+        } else {
+            setHourEnd(time);
         }
     };
 
-    const submitHourEnd = () => {
-        const hour = parseInt(hourEnd, 10);
-        if (!isNaN(hour) && hour >= 0 && hour <= 23) {
-            setHourEnd(hour);
-            onFiltersChange({ hourEnd: hour });
-        }
+    const submitTimeChange = (type) => {
+        const timeValue = type === 'start' ? hourStart : hourEnd;
+        onFiltersChange({ [type === 'start' ? 'hourStart' : 'hourEnd']: timeValue });
     };
+
 
 
     const handleLevelChange = (e) => {
@@ -92,8 +82,8 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
         setSenderID('');
         setTopic('');
         setMessage('');
-        setHourStart(0);
-        setHourEnd(23);
+        setHourStart("00:00");
+        setHourEnd("23:59");
         setDateFilterKey(prevKey => prevKey + 1);
 
         onFiltersChange({
@@ -103,8 +93,8 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
             senderID: '',
             topic: '',
             message: '',
-            hourStart: 0,
-            hourEnd: 23
+            hourStart: '00:00',
+            hourEnd: '23:59'
         });
     };
 
@@ -117,42 +107,39 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
                 <DateRangeFilter key={dateFilterKey} // Key to force re-render of DateRangeFilter
                     onDateRangeChange={handleDateRangeChange} />
             </div>
-            {(filters.startDate && filters.endDate && (filters.startDate.toISOString().split('T')[0] === filters.endDate.toISOString().split('T')[0]))
-                ? (<div>
-                    <div>
-                        <label htmlFor='hourStart'>Start Hour: </label>
-                        <input type='number' id='hourStart' name='hourStart' min='0' max='23' value={hourStart} disabled={false}
-                            onChange={handleHourStartChange}
-                            onKeyDown={(e) => { if (e.key === 'Enter') submitHourStart(); }}
-                            onBlur={submitHourStart}
-                        />
 
-
-
-                    </div>
-                    <div>
-                        <label htmlFor="hourEnd">End Hour:</label>
-                        <input type="number" id="hourEnd" name="hourEnd" min="0" max="23" value={hourEnd} disabled={false}
-                            onChange={handleHourEndChange}
-                            onKeyDown={(e) => { if (e.key === 'Enter') submitHourEnd(); }}
-                            onBlur={submitHourEnd}
-                        />
-
-                    </div>
+            {/* <div>
+                <div>
+                    <label htmlFor='dateStart'>Start Date: </label>
+                    <input type='date' id='dateStart' name='dateStart' value={filters.startDate}
+                        onChange={(e) => handleDateRangeChange(e.target.value, filters.endDate)} />
                 </div>
+                <div>
+                    <label htmlFor='dateEnd'>End Date: </label>
+                    <input type='date' id='dateEnd' name='dateEnd' value={filters.endDate}
+                        onChange={(e) => handleDateRangeChange(filters.startDate, e.target.value)} />
+                </div>
+            </div> */}
 
-                )
-                : (<div>
-                    <div>
-                        <label htmlFor='hourStart'>Start Hour: </label>
-                        <input type='text' id='hourStart' name='hourStart' value="Select single day" disabled={true} />
-                    </div>
-                    <div>
-                        <label htmlFor="hourEnd">End Hour:</label>
-                        <input type="text" id="hourEnd" name="hourEnd" value="Select single day" disabled={true} />
-                    </div>
-                </div>)
-            }
+            <div>
+                <div>
+                    <label htmlFor='hourStart'>Start Time: </label>
+                    <input type='time' id='hourStart' name='hourStart' value={hourStart} max={hourEnd} min={"00:00"}
+                        onChange={(e) => handleTimeChange(e, 'start')}
+                        onKeyDown={(e) => { if (e.key === 'Enter') submitTimeChange('start'); }}
+                        onBlur={() => submitTimeChange('start')}
+                    />
+                </div>
+                <div>
+                    <label htmlFor="hourEnd">End Time:</label>
+                    <input type="time" id="hourEnd" name="hourEnd" value={hourEnd} max={"23:59"} min={hourStart}
+                        onChange={(e) => handleTimeChange(e, 'end')}
+                        onKeyDown={(e) => { if (e.key === 'Enter') submitTimeChange('end'); }}
+                        onBlur={() => submitTimeChange('end')}
+                    />
+                </div>
+            </div>
+
 
             <p>Level</p>
             <select id="level" name="level" value={level} onChange={handleLevelChange}>

@@ -144,6 +144,8 @@
 
   /* Input and Select styles */
   input[type="text"],
+  input[type="time"],
+  input[type="date"],
   select,
   input[type="number"] {
     width: 100%;

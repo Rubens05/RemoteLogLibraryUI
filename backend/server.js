@@ -41,7 +41,7 @@ app.get('/api', async (req, res) => {
 
             console.log("Start date:", start.toString());
             console.log("End date:", end.toString());
-            // Ajustar días si es necesario
+
             start.setUTCDate(start.getUTCDate() + 1);
             end.setUTCDate(end.getUTCDate() + 2);
             end.setUTCHours(23, 59, 59, 999);
@@ -66,7 +66,6 @@ app.get('/api', async (req, res) => {
 
             console.log("Querying logs between", start.toUTCString(), "and", end.toUTCString());
 
-            console.log("Querying logs between", start.toString(), "and", end.toString());
         }
 
         if (level !== '') {
@@ -86,19 +85,18 @@ app.get('/api', async (req, res) => {
             console.log("Querying logs with message containing", message);
         }
 
+        let logs = await Log.find(query).sort({ timestamp: -1 })/*.limit(500)*/; //Adjust logs limit
 
-        const logs = await Log.find(query).sort({ timestamp: -1 })/*.limit(500)*/; //Adjust logs limit
-        // console.log("logs", logs)
-
-        if (hourStart !== '0' || hourEnd !== '23') {
+        if (hourStart && hourEnd && (hourStart !== '00:00' || hourEnd !== '23:59')) {
             console.log("Filtering logs by hour");
             logs = logs.filter(log => {
                 const logDate = new Date(log.timestamp);
                 const logHour = logDate.getUTCHours();
-                return logHour >= hourStart && logHour <= hourEnd;
+                const logMinute = logDate.getUTCMinutes();
+                return logHour >= hourStart.split(":")[0] && logHour <= hourEnd.split(":")[0] && logMinute >= hourStart.split(":")[1] && logMinute <= hourEnd.split(":")[1];
             });
         }
-        // console.log("Filtered logs by hour", logs);
+        console.log("Filtered logs by hour", logs);
 
         res.json({ logs });
     } catch (error) {
