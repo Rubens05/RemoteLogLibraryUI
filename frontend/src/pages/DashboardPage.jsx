@@ -50,7 +50,7 @@ function DashboardPage() {
                     setLoading(false);
                 });
         } else {
-            const queryString = `startDate=${startDate.toISOString().split('T')[0]}&endDate=${endDate.toISOString().split('T')[0]}&level=${level}&senderID=${senderID}&topic=${topic}&message=${message}&hourStart=${hourStart}&hourEnd=${hourEnd}`;
+            const queryString = `startDate=${startDate}&endDate=${endDate}&level=${level}&senderID=${senderID}&topic=${topic}&message=${message}&hourStart=${hourStart}&hourEnd=${hourEnd}`;
             fetch(`/api?${queryString}`)
                 .then(response => response.json())
                 .then(data => {
@@ -101,7 +101,7 @@ function DashboardPage() {
                                 <div className="toggle-controls">
                                     {filters.startDate && filters.endDate
                                         // If the start and end date are set
-                                        ? (filters.startDate.toISOString().split('T')[0] === filters.endDate.toISOString().split('T')[0]
+                                        ? (filters.startDate === filters.endDate
                                             // Show the date if both dates are the same
                                             ? (<h2>Dashboarding logs of the day {backendData.logs[0].timestamp.split('T')[0]}</h2>)
                                             // Show the date range if both dates are set

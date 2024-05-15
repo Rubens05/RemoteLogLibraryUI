@@ -43,28 +43,19 @@ function HomePage() {
             setLoading(true);
 
             const { startDate, endDate, level, senderID, topic, message, hourStart, hourEnd } = filters;
+            console.log('Filters:', filters);
+            const queryString = `startDate=${startDate}&endDate=${endDate}&level=${level}&senderID=${senderID}` +
+                `&topic=${topic}&message=${message}&hourStart=${hourStart}&hourEnd=${hourEnd}`;
 
-            if (!startDate && !endDate) {
-                const queryString = `level=${level}&senderID=${senderID}&topic=${topic}&message=${message}&hourStart=${hourStart}&hourEnd=${hourEnd}`;
-                fetch(`/api?${queryString}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        setBackendData(data);
-                        setLoading(false);
+            fetch(`/api?${queryString}`)
+                .then(response => response.json())
+                .then(data => {
+                    setBackendData(data);
+                    setLoading(false);
 
-                    });
-            } else {
-                const queryString = `startDate=${startDate.toISOString().split('T')[0]}&endDate=${endDate.toISOString().split('T')[0]}
-            &level=${level}&senderID=${senderID}&topic=${topic}&message=${message}&hourStart=${hourStart}&hourEnd=${hourEnd}`;
-                fetch(`/api?${queryString}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        setBackendData(data);
-                        setLoading(false);
+                });
 
-                    });
 
-            }
 
             if (backendData.logs.length > 0) {
                 setLastFetchTime(backendData.logs[0].timestamp)
@@ -141,9 +132,10 @@ function HomePage() {
                                 </div>)
                             : (<div >
                                 <div className="toggle-controls">
+                                    {console.log(filters.startDate, filters.endDate)}
                                     {filters.startDate && filters.endDate
                                         // If the start and end date are set
-                                        ? (filters.startDate.toISOString().split('T')[0] === filters.endDate.toISOString().split('T')[0]
+                                        ? (filters.startDate === filters.endDate
                                             // Show the date if both dates are the same
 
                                             ? (<h2>Showing logs of the day {backendData.logs[0].timestamp.split('T')[0]}</h2>)

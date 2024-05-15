@@ -35,15 +35,29 @@ app.get('/api', async (req, res) => {
     console.log("Query params:", req.query);
     try {
         const query = {};
-        if (startDate && endDate) {
+
+        if (startDate !== 'null' && endDate === 'null') {
+            const start = new Date(startDate);
+            start.setUTCDate(start.getUTCDate());
+            query.timestamp = { $gte: start };
+            console.log("Querying logs greaters than", start.toUTCString());
+
+        }
+        if (startDate === 'null' && endDate !== 'null') {
+            const end = new Date(endDate);
+            end.setUTCHours(23, 59, 59, 999);
+            query.timestamp = { $lte: end };
+            console.log("Querying logs less than", end.toUTCString());
+        }
+        if (startDate !== 'null' && endDate !== 'null') {
             const start = new Date(startDate);
             const end = new Date(endDate);
 
             console.log("Start date:", start.toString());
             console.log("End date:", end.toString());
 
-            start.setUTCDate(start.getUTCDate() + 1);
-            end.setUTCDate(end.getUTCDate() + 2);
+            start.setUTCDate(start.getUTCDate());
+            end.setUTCDate(end.getUTCDate());
             end.setUTCHours(23, 59, 59, 999);
 
             console.log("Start date:", start.toUTCString());

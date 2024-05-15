@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import DateRangeFilter from './DateRangeFilter';
 
 const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, filters }) => {
     const [level, setLevel] = useState('');
@@ -12,11 +11,6 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
 
     const handleDateRangeChange = (start, end) => {
         onFiltersChange({ startDate: start, endDate: end });
-        if (start !== end) {
-            setHourStart("00:00");
-            setHourEnd("23:59");
-            onFiltersChange({ startDate: start, endDate: end, hourStart: "00:00", hourEnd: "23:59" });
-        }
     };
 
 
@@ -104,27 +98,22 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
         <div>
 
             <div>
-                <DateRangeFilter key={dateFilterKey} // Key to force re-render of DateRangeFilter
-                    onDateRangeChange={handleDateRangeChange} />
-            </div>
-
-            {/* <div>
                 <div>
                     <label htmlFor='dateStart'>Start Date: </label>
-                    <input type='date' id='dateStart' name='dateStart' value={filters.startDate}
+                    <input type='date' id='dateStart' name='dateStart' value={filters.startDate} max={filters.endDate}
                         onChange={(e) => handleDateRangeChange(e.target.value, filters.endDate)} />
                 </div>
                 <div>
                     <label htmlFor='dateEnd'>End Date: </label>
-                    <input type='date' id='dateEnd' name='dateEnd' value={filters.endDate}
+                    <input type='date' id='dateEnd' name='dateEnd' value={filters.endDate} min={filters.startDate}
                         onChange={(e) => handleDateRangeChange(filters.startDate, e.target.value)} />
                 </div>
-            </div> */}
+            </div>
 
             <div>
                 <div>
                     <label htmlFor='hourStart'>Start Time: </label>
-                    <input type='time' id='hourStart' name='hourStart' value={hourStart} max={hourEnd} min={"00:00"}
+                    <input type='time' id='hourStart' name='hourStart' value={hourStart}
                         onChange={(e) => handleTimeChange(e, 'start')}
                         onKeyDown={(e) => { if (e.key === 'Enter') submitTimeChange('start'); }}
                         onBlur={() => submitTimeChange('start')}
@@ -132,7 +121,7 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
                 </div>
                 <div>
                     <label htmlFor="hourEnd">End Time:</label>
-                    <input type="time" id="hourEnd" name="hourEnd" value={hourEnd} max={"23:59"} min={hourStart}
+                    <input type="time" id="hourEnd" name="hourEnd" value={hourEnd}
                         onChange={(e) => handleTimeChange(e, 'end')}
                         onKeyDown={(e) => { if (e.key === 'Enter') submitTimeChange('end'); }}
                         onBlur={() => submitTimeChange('end')}
