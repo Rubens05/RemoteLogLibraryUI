@@ -43,24 +43,24 @@ app.get('/api', async (req, res) => {
             start.setUTCDate(start.getUTCDate() + 1);
             end.setUTCDate(end.getUTCDate() + 2);
 
-            console.log("Start date:", start.toISOString());
-            console.log("End date:", end.toISOString());
+            console.log("Start date:", start.toString());
+            console.log("End date:", end.toString());
 
-            if ((startDate === endDate) && (hourStart !== '0' || hourEnd != '23')) {
-                console.log("Setting hours");
-                console.log("Hour start:", hourStart);
-                console.log("Hour end:", hourEnd);
+            // if ((startDate === endDate) && (hourStart !== '0' || hourEnd != '23')) {
+            //     console.log("Setting hours");
+            //     console.log("Hour start:", hourStart);
+            //     console.log("Hour end:", hourEnd);
 
-                start.setUTCHours(hourStart, 0, 0, 0);
-                end.setUTCDate(end.getUTCDate() - 1);
-                end.setUTCHours(hourEnd, 0, 0, 0);
+            //     start.setUTCHours(hourStart, 0, 0, 0);
+            //     end.setUTCDate(end.getUTCDate() - 1);
+            //     end.setUTCHours(hourEnd, 0, 0, 0);
 
-                console.log("Start date with hours:", start.toISOString());
-                console.log("End date with hours:", end.toISOString());
-            }
+            //     console.log("Start date with hours:", start.toISOString());
+            //     console.log("End date with hours:", end.toISOString());
+            // }
 
             query.timestamp = { $gte: start, $lte: end };
-            console.log("Querying logs between", start.toISOString(), "and", end.toISOString());
+            console.log("Querying logs between", start.toString(), "and", end.toString());
         }
 
         if (level !== '') {
@@ -83,6 +83,17 @@ app.get('/api', async (req, res) => {
 
         const logs = await Log.find(query).sort({ timestamp: -1 })/*.limit(500)*/; //Adjust logs limit
         console.log("logs", logs)
+
+        if (hourStart !== '0' || hourEnd !== '23') {
+            console.log("Filtering logs by hour");
+            logs = logs.filter(log => {
+                const logDate = new Date(log.timestamp);
+                const logHour = logDate.getUTCHours();
+                return logHour >= hourStart && logHour <= hourEnd;
+            });
+        }
+        console.log("Filtered logs by hour", logs);
+
         res.json({ logs });
     } catch (error) {
         console.error("Error fetching logs:", error);

@@ -7,6 +7,9 @@ function HomePage() {
     const [backendData, setBackendData] = useState({ logs: [] });
     const [loading, setLoading] = useState(false);
     const [format, setFormat] = useState('default'); // New state for formatting
+    const [lastFetchTime, setLastFetchTime] = useState(null);
+    const [autoRefresh, setAutoRefresh] = useState(false); // Default autorefresh off
+    const [initialFetch, setInitialFetch] = useState(true); // Initial fetch to get the logs, and handle filters change
     const [levelOptions, setLevelOptions] = useState([]);
     const [senderOptions, setSenderOptions] = useState([]);
     const [topicOptions, setTopicOptions] = useState([]);
@@ -34,34 +37,63 @@ function HomePage() {
     }, []);
 
 
-    // Fetch logs when filters change
+    // Fetch logs when filters change and peridically fetch new logs
     useEffect(() => {
-        setLoading(true);
+        const fetchLogs = () => {
+            setLoading(true);
 
-        const { startDate, endDate, level, senderID, topic, message, hourStart, hourEnd } = filters;
+            const { startDate, endDate, level, senderID, topic, message, hourStart, hourEnd } = filters;
 
-        if (!startDate && !endDate) {
-            const queryString = `level=${level}&senderID=${senderID}&topic=${topic}&message=${message}&hourStart=${hourStart}&hourEnd=${hourEnd}`;
-            fetch(`/api?${queryString}`)
-                .then(response => response.json())
-                .then(data => {
-                    setBackendData(data);
-                    setLoading(false);
-                });
-        } else {
-            const queryString = `startDate=${startDate.toISOString().split('T')[0]}&endDate=${endDate.toISOString().split('T')[0]}
+            if (!startDate && !endDate) {
+                const queryString = `level=${level}&senderID=${senderID}&topic=${topic}&message=${message}&hourStart=${hourStart}&hourEnd=${hourEnd}`;
+                fetch(`/api?${queryString}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        setBackendData(data);
+                        setLoading(false);
+
+                    });
+            } else {
+                const queryString = `startDate=${startDate.toISOString().split('T')[0]}&endDate=${endDate.toISOString().split('T')[0]}
             &level=${level}&senderID=${senderID}&topic=${topic}&message=${message}&hourStart=${hourStart}&hourEnd=${hourEnd}`;
-            fetch(`/api?${queryString}`)
-                .then(response => response.json())
-                .then(data => {
-                    setBackendData(data);
-                    setLoading(false);
-                });
+                fetch(`/api?${queryString}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        setBackendData(data);
+                        setLoading(false);
 
+                    });
+
+            }
+
+            if (backendData.logs.length > 0) {
+                setLastFetchTime(backendData.logs[0].timestamp)
+            }
+        };
+
+        if (initialFetch) {
+            console.log('Initial fetch');
+            fetchLogs();
+            setInitialFetch(false);
         }
-    }, [filters]);
+
+        let flag = false;
+        if (autoRefresh === true) {
+            console.log('Auto refresh');
+            flag = true;
+            fetchLogs();
+        }
+
+        if (flag) {
+            const interval = setInterval(fetchLogs, 10000); // Fetch new logs every 5 minutes
+            return () => clearInterval(interval);
+        }
+
+
+    }, [filters, autoRefresh]);
 
     const handleFiltersChange = (newFilters) => {
+        setInitialFetch(true);
         setFilters(prev => ({ ...prev, ...newFilters }));
     };
 
@@ -69,6 +101,10 @@ function HomePage() {
     const toggleFormat = () => {
         setFormat(format === 'default' ? 'colored' : 'default');
     };
+
+    const handleAutoRefreshChange = () => {
+        setAutoRefresh(!autoRefresh);
+    }
 
 
     return (
@@ -117,7 +153,15 @@ function HomePage() {
                                         // Show all logs if no date range is set
                                         : (<h2>Showing all logs</h2>)}
 
-                                    <button title='Change logs color' onClick={toggleFormat}>Toggle Format</button>
+                                    <button title='Change log colors' onClick={toggleFormat}>
+                                        {format === "default" ? "Log format [Default]" : "Log format [Colored]"}</button>
+                                    <div className="toggle-controls">
+
+                                        <button title='Change autorefresh mode' onClick={handleAutoRefreshChange}>
+                                            {autoRefresh ? "Auto Refresh [ON]" : "Auto Refresh [OFF]"}
+                                        </button>
+                                    </div>
+
                                 </div>
                                 <LogsTable logs={backendData.logs} format={format} />
                             </div>)

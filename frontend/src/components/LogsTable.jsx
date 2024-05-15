@@ -4,12 +4,13 @@ const LogsTable = ({ logs, format }) => {
     const [currentPage, setCurrentPage] = useState(0);
     const [itemsPerPage, setItemsPerPage] = useState(16);
     const [useLocalTime, setUseLocalTime] = useState(false);
-    const [sortDirection, setSortDirection] = useState('asc');
+    const [sortDirection, setSortDirection] = useState('desc');
     const [columnWidths, setColumnWidths] = useState({
         level: 300,
         message: 600,
-        senderID: 70,
-        topic: 70,
+        senderID: 100,
+        topic: 100,
+        timestamp: 250
     });
 
     const [visibleColumns, setVisibleColumns] = useState({
@@ -95,6 +96,7 @@ const LogsTable = ({ logs, format }) => {
                                 {column.charAt(0).toUpperCase() + column.slice(1)}
 
                                 {column === 'timestamp' && (
+
                                     <span onClick={toggleSortDirection} style={{ cursor: 'pointer', position: 'relative' }}>
                                         {useLocalTime ? " Local " : " UTC "}
                                         {sortDirection === 'asc' ? ' ↑' : ' ↓'}
@@ -103,6 +105,7 @@ const LogsTable = ({ logs, format }) => {
 
                                 {column !== 'timestamp' && (<span
                                     className="resize-handle"
+
                                     onMouseDown={handleMouseDown(column)}
                                     style={{ cursor: 'ew-resize', position: 'absolute', right: '0', width: '10px', top: '0', bottom: '0' }}
                                 />)}

@@ -117,7 +117,6 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
                 <DateRangeFilter key={dateFilterKey} // Key to force re-render of DateRangeFilter
                     onDateRangeChange={handleDateRangeChange} />
             </div>
-            {console.log(filters.startDate, filters.endDate)}
             {(filters.startDate && filters.endDate && (filters.startDate.toISOString().split('T')[0] === filters.endDate.toISOString().split('T')[0]))
                 ? (<div>
                     <div>
@@ -127,7 +126,6 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
                             onKeyDown={(e) => { if (e.key === 'Enter') submitHourStart(); }}
                             onBlur={submitHourStart}
                         />
-                        {console.log(hourStart)}
 
 
 
@@ -139,7 +137,6 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
                             onKeyDown={(e) => { if (e.key === 'Enter') submitHourEnd(); }}
                             onBlur={submitHourEnd}
                         />
-                        {console.log(hourEnd)}
 
                     </div>
                 </div>
