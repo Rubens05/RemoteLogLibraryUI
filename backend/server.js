@@ -31,10 +31,15 @@ const Log = mongoose.model('Log', logSchema, "LogRegistry");
 
 // Endpoint for fetching logs
 app.get('/api', async (req, res) => {
-    const { startDate, endDate, level, senderID, topic, message, hourStart, hourEnd } = req.query;
+    const { startDate, endDate, level, senderID, topic, message, hourStart, hourEnd, lastTimestamp } = req.query;
     console.log("Query params:", req.query);
     try {
         const query = {};
+
+        if (lastTimestamp !== 'null') {
+            console.log("Querying logs greater than", lastTimestamp);
+            query.timestamp = { $gt: new Date(lastTimestamp) };
+        }
 
         if (startDate !== 'null' && endDate === 'null') {
             const start = new Date(startDate);
@@ -105,9 +110,38 @@ app.get('/api', async (req, res) => {
             console.log("Filtering logs by hour");
             logs = logs.filter(log => {
                 const logDate = new Date(log.timestamp);
-                const logHour = logDate.getUTCHours();
-                const logMinute = logDate.getUTCMinutes();
-                return logHour >= hourStart.split(":")[0] && logHour <= hourEnd.split(":")[0] && logMinute >= hourStart.split(":")[1] && logMinute <= hourEnd.split(":")[1];
+                console.log("Log date::::::::::::::::::::::::::::::::::::::", logDate);
+
+                // Create date object using the hourStart and hourEnd
+                /* use hourStart to create a date object */
+                // console.log("Year log:", logDate.getUTCFullYear());
+                // console.log("Month log:", logDate.getMonth());
+                // console.log("Date log:", logDate.getUTCDate());
+                const stringDate = logDate.getUTCFullYear() + "-" + (logDate.getMonth() + 1).toString().padStart(2, '0') + "-" + logDate.getUTCDate();
+
+                const startDate = new Date(stringDate);
+                startDate.setUTCDate(startDate.getUTCDate());
+                startDate.setUTCHours(hourStart.split(":")[0], hourStart.split(":")[1]);
+
+
+
+                console.log("Start date:", startDate);
+
+                const endDate = startDate;
+
+                endDate.setUTCHours(hourEnd.split(":")[0], hourEnd.split(":")[1]);
+                console.log("End date:", endDate);
+                console.log(":::::::::::::::::::.");
+
+
+                if (startDate.getUTCDate() <= logDate.getUTCDate() && logDate.getUTCDate() <= endDate.getUTCDate()) {
+                    console.log("Lo sacaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+                }
+
+
+                return (startDate.getUTCDate() <= logDate.getUTCDate() && logDate.getUTCDate() <= endDate.getUTCDate());
+
+
             });
         }
         console.log("Filtered logs by hour", logs);

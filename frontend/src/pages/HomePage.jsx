@@ -45,19 +45,28 @@ function HomePage() {
             const { startDate, endDate, level, senderID, topic, message, hourStart, hourEnd } = filters;
             console.log('Filters:', filters);
             const queryString = `startDate=${startDate}&endDate=${endDate}&level=${level}&senderID=${senderID}` +
-                `&topic=${topic}&message=${message}&hourStart=${hourStart}&hourEnd=${hourEnd}`;
+                `&topic=${topic}&message=${message}&hourStart=${hourStart}&hourEnd=${hourEnd}&lastTimestamp=${lastFetchTime}&autoRefresh=${autoRefresh}`;
 
             fetch(`/api?${queryString}`)
                 .then(response => response.json())
                 .then(data => {
-                    setBackendData(data);
+                    if (initialFetch) {
+                        setBackendData(data);
+                    } else {
+                        setBackendData(prevData => ({
+                            logs: [...prevData.logs, ...data.logs]
+                        }));
+                    }
                     setLoading(false);
-
+                    if (data.logs.length > 0) {
+                        setLastFetchTime(data.logs[data.logs.length - 1].timestamp);
+                    }
                 });
 
 
 
-            if (backendData.logs.length > 0) {
+            if (backendData.logs.length > 0 && initialFetch === false && autoRefresh === false) {
+                console.log('Last fetch time:', backendData.logs[0].timestamp);
                 setLastFetchTime(backendData.logs[0].timestamp)
             }
         };
@@ -125,10 +134,22 @@ function HomePage() {
                             <div className="toggle-controls">
                                 <h2>Loading Logs...</h2>
                             </div>)
+
+
                         : (backendData.logs.length === 0
                             ? (
+
                                 <div className="toggle-controls">
                                     <h2>No results found</h2>
+
+                                    <div className='toggle-controls'>
+                                        <div className="toggle-controls">
+
+                                            <button title='Change autorefresh mode' onClick={handleAutoRefreshChange}>
+                                                {autoRefresh ? "Auto Refresh [ON]" : "Auto Refresh [OFF]"}</button>
+                                        </div>
+                                    </div>
+
                                 </div>)
                             : (<div >
                                 <div className="toggle-controls">
@@ -150,8 +171,7 @@ function HomePage() {
                                     <div className="toggle-controls">
 
                                         <button title='Change autorefresh mode' onClick={handleAutoRefreshChange}>
-                                            {autoRefresh ? "Auto Refresh [ON]" : "Auto Refresh [OFF]"}
-                                        </button>
+                                            {autoRefresh ? "Auto Refresh [ON]" : "Auto Refresh [OFF]"}</button>
                                     </div>
 
                                 </div>
