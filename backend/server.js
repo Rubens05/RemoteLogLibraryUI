@@ -31,30 +31,30 @@ const Log = mongoose.model('Log', logSchema, "LogRegistry");
 
 // Endpoint for fetching logs
 app.get('/api', async (req, res) => {
-    const { startDate, endDate, level, senderID, topic, message, hourStart, hourEnd, lastTimestamp } = req.query;
+    const { startDate, endDate, level, senderID, topic, message, hourStart, hourEnd, lastTimestamp, autoRefresh } = req.query;
     console.log("Query params:", req.query);
     try {
         const query = {};
 
-        if (lastTimestamp !== 'null') {
+        if ((lastTimestamp !== 'null' && lastTimestamp !== '') && autoRefresh === "true") {
             console.log("Querying logs greater than", lastTimestamp);
             query.timestamp = { $gt: new Date(lastTimestamp) };
         }
 
-        if (startDate !== 'null' && endDate === 'null') {
+        if ((startDate !== 'null' && startDate !== '') && (endDate === 'null' || endDate === '')) {
             const start = new Date(startDate);
             start.setUTCDate(start.getUTCDate());
             query.timestamp = { $gte: start };
             console.log("Querying logs greaters than", start.toUTCString());
 
         }
-        if (startDate === 'null' && endDate !== 'null') {
+        if ((startDate === 'null' || startDate === '') && (endDate !== 'null' && endDate !== '')) {
             const end = new Date(endDate);
             end.setUTCHours(23, 59, 59, 999);
             query.timestamp = { $lte: end };
-            console.log("Querying logs less than", end.toUTCString());
+            console.log("Querying logs lowers than", end.toUTCString());
         }
-        if (startDate !== 'null' && endDate !== 'null') {
+        if ((startDate !== 'null' && startDate !== '') && (endDate !== 'null' && endDate !== '')) {
             const start = new Date(startDate);
             const end = new Date(endDate);
 
@@ -104,7 +104,7 @@ app.get('/api', async (req, res) => {
             console.log("Querying logs with message containing", message);
         }
 
-        let logs = await Log.find(query).sort({ timestamp: -1 })/*.limit(500)*/; //Adjust logs limit
+        let logs = await Log.find(query).sort({ timestamp: -1 }).limit(1); //Adjust logs limit
 
         if (hourStart && hourEnd && (hourStart !== '00:00' || hourEnd !== '23:59')) {
             console.log("Filtering logs by hour");
@@ -144,7 +144,7 @@ app.get('/api', async (req, res) => {
 
             });
         }
-        console.log("Filtered logs by hour", logs);
+        console.log("Logs:", logs);
 
         res.json({ logs });
     } catch (error) {

@@ -1,16 +1,24 @@
 import React, { useState } from 'react';
 
 const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, filters }) => {
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
+    const [key, setKey] = useState(0);
     const [level, setLevel] = useState('');
     const [senderID, setSenderID] = useState('');
     const [topic, setTopic] = useState('');
     const [message, setMessage] = useState('');
     const [hourStart, setHourStart] = useState("00:00");
     const [hourEnd, setHourEnd] = useState("23:59");
-    const [dateFilterKey, setDateFilterKey] = useState(0);
 
-    const handleDateRangeChange = (start, end) => {
-        onFiltersChange({ startDate: start, endDate: end });
+    const handleStartDateChange = (start) => {
+        setStartDate(start);
+        onFiltersChange({ startDate: start, endDate });
+    };
+
+    const handleEndDateChange = (end) => {
+        setEndDate(end);
+        onFiltersChange({ startDate, endDate: end });
     };
 
 
@@ -72,14 +80,16 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
     };
 
     const clearFilters = () => {
+        setStartDate(null);
+        setEndDate(null);
         setLevel('');
         setSenderID('');
         setTopic('');
         setMessage('');
         setHourStart("00:00");
         setHourEnd("23:59");
-        setDateFilterKey(prevKey => prevKey + 1);
 
+        setKey(prevKey => prevKey + 1);
         onFiltersChange({
             startDate: null,
             endDate: null,
@@ -97,16 +107,20 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
     return (
         <div>
 
-            <div>
+            <div key={key}>
                 <div>
                     <label htmlFor='dateStart'>Start Date: </label>
-                    <input type='date' id='dateStart' name='dateStart' value={filters.startDate} max={filters.endDate}
-                        onChange={(e) => handleDateRangeChange(e.target.value, filters.endDate)} />
+                    {console.log('startDate', startDate)}
+                    {console.log('endDate', endDate)}
+                    <input type='date' id='dateStart' name='dateStart' value={startDate} max={filters.endDate}
+                        onChange={(e) => handleStartDateChange(e.target.value)} />
                 </div>
                 <div>
                     <label htmlFor='dateEnd'>End Date: </label>
-                    <input type='date' id='dateEnd' name='dateEnd' value={filters.endDate} min={filters.startDate}
-                        onChange={(e) => handleDateRangeChange(filters.startDate, e.target.value)} />
+                    {console.log('startDate', startDate)}
+                    {console.log('endDate', endDate)}
+                    <input type='date' id='dateEnd' name='dateEnd' value={endDate} min={filters.startDate}
+                        onChange={(e) => handleEndDateChange(e.target.value)} />
                 </div>
             </div>
 
