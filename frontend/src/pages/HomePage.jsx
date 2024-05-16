@@ -45,30 +45,41 @@ function HomePage() {
             const { startDate, endDate, level, senderID, topic, message, hourStart, hourEnd } = filters;
             console.log('Filters:', filters);
             const queryString = `startDate=${startDate}&endDate=${endDate}&level=${level}&senderID=${senderID}` +
-                `&topic=${topic}&message=${message}&hourStart=${hourStart}&hourEnd=${hourEnd}&lastTimestamp=${lastFetchTime}&autoRefresh=${autoRefresh}`;
+                `&topic=${topic}&message=${message}&hourStart=${hourStart}&hourEnd=${hourEnd}`;
 
             fetch(`/api?${queryString}`)
                 .then(response => response.json())
                 .then(data => {
-                    if (initialFetch) {
-                        setBackendData(data);
-                    } else {
-                        setBackendData(prevData => ({
-                            logs: [...prevData.logs, ...data.logs]
-                        }));
-                    }
-                    setLoading(false);
+                    setBackendData(data);
                     if (data.logs.length > 0) {
-                        setLastFetchTime(data.logs[data.logs.length - 1].timestamp);
+                        console.log("Logs fetched:", data.logs);
+                        setLastFetchTime(data.logs[0].timestamp);
                     }
                 });
+            console.log(autoRefresh);
 
+            if (autoRefresh) {
+                console.log('Auto refreshhhhhhhhhhhhhhh');
+                fetch(`/api/new?lastTimestamp=${lastFetchTime}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('New logs:', data);
+                        if (data.logs.length > 0) {
+                            setBackendData(prev => ({ logs: [...data.logs, ...prev.logs] }));
+                            setLastFetchTime(data.logs[0].timestamp);
+                        }
+
+                    });
+            }
 
 
             if (backendData.logs.length > 0 && initialFetch === false && autoRefresh === false) {
                 console.log('Last fetch time:', backendData.logs[0].timestamp);
                 setLastFetchTime(backendData.logs[0].timestamp)
             }
+
+            setLoading(false);
+
         };
 
         if (initialFetch) {
@@ -88,6 +99,7 @@ function HomePage() {
             const interval = setInterval(fetchLogs, 10000); // Fetch new logs every 5 minutes
             return () => clearInterval(interval);
         }
+
 
 
     }, [filters, autoRefresh]);

@@ -36,11 +36,6 @@ app.get('/api', async (req, res) => {
     try {
         const query = {};
 
-        if ((lastTimestamp !== 'null' && lastTimestamp !== '') && autoRefresh === "true") {
-            console.log("Querying logs greater than", lastTimestamp);
-            query.timestamp = { $gt: new Date(lastTimestamp) };
-        }
-
         if ((startDate !== 'null' && startDate !== '') && (endDate === 'null' || endDate === '')) {
             const start = new Date(startDate);
             start.setUTCDate(start.getUTCDate());
@@ -68,19 +63,6 @@ app.get('/api', async (req, res) => {
             console.log("Start date:", start.toUTCString());
             console.log("End date:", end.toUTCString());
 
-            // if ((startDate === endDate) && (hourStart !== '0' || hourEnd != '23')) {
-            //     console.log("Setting hours");
-            //     console.log("Hour start:", hourStart);
-            //     console.log("Hour end:", hourEnd);
-
-            //     start.setUTCHours(hourStart, 0, 0, 0);
-            //     end.setUTCDate(end.getUTCDate() - 1);
-            //     end.setUTCHours(hourEnd, 0, 0, 0);
-
-            //     console.log("Start date with hours:", start.toISOString());
-            //     console.log("End date with hours:", end.toISOString());
-            // }
-
             query.timestamp = { $gte: start, $lte: end };
 
             console.log("Querying logs between", start.toUTCString(), "and", end.toUTCString());
@@ -104,7 +86,12 @@ app.get('/api', async (req, res) => {
             console.log("Querying logs with message containing", message);
         }
 
-        let logs = await Log.find(query).sort({ timestamp: -1 }).limit(1); //Adjust logs limit
+        if ((lastTimestamp !== 'null' && lastTimestamp !== '') && autoRefresh === "true") {
+            console.log("Querying logs greater than", lastTimestamp);
+            query.timestamp = { $gt: new Date(lastTimestamp) };
+        }
+
+        let logs = await Log.find(query).sort({ timestamp: -1 })/*.limit(2)*/; //Adjust logs limit
 
         if (hourStart && hourEnd && (hourStart !== '00:00' || hourEnd !== '23:59')) {
             console.log("Filtering logs by hour");
@@ -114,9 +101,9 @@ app.get('/api', async (req, res) => {
 
                 // Create date object using the hourStart and hourEnd
                 /* use hourStart to create a date object */
-                // console.log("Year log:", logDate.getUTCFullYear());
-                // console.log("Month log:", logDate.getMonth());
-                // console.log("Date log:", logDate.getUTCDate());
+                console.log("Year log:", logDate.getUTCFullYear());
+                console.log("Month log:", logDate.getMonth());
+                console.log("Date log:", logDate.getUTCDate());
                 const stringDate = logDate.getUTCFullYear() + "-" + (logDate.getMonth() + 1).toString().padStart(2, '0') + "-" + logDate.getUTCDate();
 
                 const startDate = new Date(stringDate);
@@ -149,6 +136,23 @@ app.get('/api', async (req, res) => {
         res.json({ logs });
     } catch (error) {
         console.error("Error fetching logs:", error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// Endpoint for fetching new logs
+app.get('/api/new', async (req, res) => {
+    const { lastTimestamp } = req.query;
+    console.log("Query params:", req.query);
+    try {
+        const date = new Date(lastTimestamp);
+        date.setUTCDate(date.getUTCDate());
+        console.log("Querying logs greater than", date.toUTCString());
+        const query = { timestamp: { $gt: date } };
+        let logs = await Log.find(query).sort({ timestamp: -1 });
+        res.json({ logs });
+    } catch (error) {
+        console.error("Error fetching new logs:", error);
         res.status(500).json({ message: error.message });
     }
 });
