@@ -97,38 +97,28 @@ app.get('/api', async (req, res) => {
             console.log("Filtering logs by hour");
             logs = logs.filter(log => {
                 const logDate = new Date(log.timestamp);
-                console.log("Log date::::::::::::::::::::::::::::::::::::::", logDate);
+                console.log("Log date:", logDate);
 
-                // Create date object using the hourStart and hourEnd
-                /* use hourStart to create a date object */
-                console.log("Year log:", logDate.getUTCFullYear());
-                console.log("Month log:", logDate.getMonth());
-                console.log("Date log:", logDate.getUTCDate());
-                const stringDate = logDate.getUTCFullYear() + "-" + (logDate.getMonth() + 1).toString().padStart(2, '0') + "-" + logDate.getUTCDate();
+                // Create start date object using the log date and hourStart
+                const startDate = new Date(logDate);
+                startDate.setUTCHours(parseInt(hourStart.split(":")[0]), parseInt(hourStart.split(":")[1]), 0, 0);
 
-                const startDate = new Date(stringDate);
-                startDate.setUTCDate(startDate.getUTCDate());
-                startDate.setUTCHours(hourStart.split(":")[0], hourStart.split(":")[1]);
-
-
+                // Create end date object using the log date and hourEnd
+                const endDate = new Date(logDate);
+                endDate.setUTCHours(parseInt(hourEnd.split(":")[0]), parseInt(hourEnd.split(":")[1]), 0, 0);
 
                 console.log("Start date:", startDate);
-
-                const endDate = startDate;
-
-                endDate.setUTCHours(hourEnd.split(":")[0], hourEnd.split(":")[1]);
                 console.log("End date:", endDate);
                 console.log(":::::::::::::::::::.");
 
-
-                if (startDate.getUTCDate() <= logDate.getUTCDate() && logDate.getUTCDate() <= endDate.getUTCDate()) {
-                    console.log("Lo sacaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+                // Check if logDate is within the start and end time
+                if (logDate >= startDate && logDate < endDate) {
+                    console.log("Log is within the specified hour range");
+                    return true;
+                } else {
+                    console.log("Log is outside the specified hour range");
+                    return false;
                 }
-
-
-                return (startDate.getUTCDate() <= logDate.getUTCDate() && logDate.getUTCDate() <= endDate.getUTCDate());
-
-
             });
         }
         console.log("Logs:", logs);
@@ -142,7 +132,7 @@ app.get('/api', async (req, res) => {
 
 // Endpoint for fetching new logs
 app.get('/api/new', async (req, res) => {
-    const { lastTimestamp } = req.query;
+    const { lastTimestamp, hourEnd, hourStart } = req.query;
     console.log("Query params:", req.query);
     try {
         const date = new Date(lastTimestamp);
@@ -150,6 +140,36 @@ app.get('/api/new', async (req, res) => {
         console.log("Querying logs greater than", date.toUTCString());
         const query = { timestamp: { $gt: date } };
         let logs = await Log.find(query).sort({ timestamp: -1 });
+
+        if (hourStart && hourEnd && (hourStart !== '00:00' || hourEnd !== '23:59')) {
+            console.log("Filtering logs by hour");
+            logs = logs.filter(log => {
+                const logDate = new Date(log.timestamp);
+                console.log("Log date:", logDate);
+
+                // Create start date object using the log date and hourStart
+                const startDate = new Date(logDate);
+                startDate.setUTCHours(parseInt(hourStart.split(":")[0]), parseInt(hourStart.split(":")[1]), 0, 0);
+
+                // Create end date object using the log date and hourEnd
+                const endDate = new Date(logDate);
+                endDate.setUTCHours(parseInt(hourEnd.split(":")[0]), parseInt(hourEnd.split(":")[1]), 0, 0);
+
+                console.log("Start date:", startDate);
+                console.log("End date:", endDate);
+                console.log(":::::::::::::::::::.");
+
+                // Check if logDate is within the start and end time
+                if (logDate >= startDate && logDate < endDate) {
+                    console.log("Log is within the specified hour range");
+                    return true;
+                } else {
+                    console.log("Log is outside the specified hour range");
+                    return false;
+                }
+            });
+        }
+
         res.json({ logs });
     } catch (error) {
         console.error("Error fetching new logs:", error);
