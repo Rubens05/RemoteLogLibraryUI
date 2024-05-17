@@ -25,6 +25,8 @@
     color: #fff;
     padding: 1rem;
     margin-bottom: auto;
+    z-index: 10;
+    /* Un z-index mayor que el de .log-card */
 
   }
 
@@ -104,7 +106,7 @@
     padding: 1rem;
     transition: all 0.3s;
     position: fixed;
-    left: 0;
+    margin-left: 1rem;
     top: 67.9px;
     bottom: 0;
     z-index: 1000;
@@ -112,7 +114,9 @@
 
   .App-sidebar h1 {
     color: #61dafb;
-    margin-bottom: 1rem;
+    padding-top: 5rem;
+    font-size: large;
+
 
   }
 
@@ -176,7 +180,7 @@
   .LogsTable {
     width: 100%;
     border-collapse: separate;
-    margin-top: 0.45rem;
+    margin-top: -0.5rem;
     background-color: #1c1c1c;
   }
 
@@ -384,14 +388,64 @@
     background-color: #4aaedf;
   }
 
-  /* Styles for the dashboard*/
+  /* Styles for the boards*/
 
-  .dashboard-controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 1rem;
+  .single-log-card {
+    width: 100%;
+    height: 500px;
+    background-color: #ccc;
+    /* Ajusta el tamaño como necesites */
   }
+
+  .log-card {
+    display: flex;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #fff;
+    margin: 20px 0;
+    margin-right: 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .image-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    /* Cambiado a columna */
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    /* Cambiado a borde inferior */
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+    z-index: 2;
+  }
+
+  .image-container h1 {
+    color: #333;
+    font-size: 1.5rem;
+    margin-top: 1rem;
+    text-align: center;
+  }
+
+
+
+  .log-card-image {
+    max-width: 90%;
+    max-height: 100%;
+    border-radius: 8px;
+    /* margin-top: 3rem; */
+  }
+
+  .chart-container {
+    flex: 3;
+    padding: 10px;
+  }
+
 
   /* Styles for the form*/
   .contact-form-container {

@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import SideBar from '../components/SideBar';
-import PieChart from '../components/dashboarComponents/PieChart';
-import LineChart from '../components/dashboarComponents/LineChart';
-import BarChart from '../components/dashboarComponents/BarChart';
+import LogCard from '../components/dashboarComponents/LogCard';
 import '../App.css';
 
-function DashboardPage() {
+
+function BoardsPage() {
     const [backendData, setBackendData] = useState({ logs: [] });
     const [loading, setLoading] = useState(false);
-    const [format, setFormat] = useState('default'); // New state for formatting
     const [lastFetchTime, setLastFetchTime] = useState(null);
     const [autoRefresh, setAutoRefresh] = useState(false); // Default autorefresh off
     const [initialFetch, setInitialFetch] = useState(true); // Initial fetch to get the logs, and handle filters change
+    const [boards, setBoards] = useState([]); // New state for boards
     const [levelOptions, setLevelOptions] = useState([]);
     const [senderOptions, setSenderOptions] = useState([]);
     const [topicOptions, setTopicOptions] = useState([]);
@@ -36,6 +35,14 @@ function DashboardPage() {
                 setTopicOptions(data.topicOptions);
             })
             .catch(error => console.error('Error loading filter options:', error));
+
+        // Fetch the list of boards
+        fetch('/api/boards')
+            .then(response => response.json())
+            .then(data => {
+                setBoards(data.boards);
+            })
+            .catch(error => console.error('Error loading boards:', error));
     }, []);
 
 
@@ -54,18 +61,14 @@ function DashboardPage() {
                 .then(data => {
                     setBackendData(data);
                     if (data.logs.length > 0) {
-                        console.log("Logs fetched:", data.logs);
                         setLastFetchTime(data.logs[0].timestamp);
                     }
                 });
-            console.log(autoRefresh);
 
             if (autoRefresh) {
-                console.log('Auto refreshhhhhhhhhhhhhhh');
                 fetch(`/api/new?lastTimestamp=${lastFetchTime}`)
                     .then(response => response.json())
                     .then(data => {
-                        console.log('New logs:', data);
                         if (data.logs.length > 0) {
                             setBackendData(prev => ({ logs: [...data.logs, ...prev.logs] }));
                             setLastFetchTime(data.logs[0].timestamp);
@@ -76,7 +79,6 @@ function DashboardPage() {
 
 
             if (backendData.logs.length > 0 && initialFetch === false && autoRefresh === false) {
-                console.log('Last fetch time:', backendData.logs[0].timestamp);
                 setLastFetchTime(backendData.logs[0].timestamp)
             }
 
@@ -85,14 +87,12 @@ function DashboardPage() {
         };
 
         if (initialFetch) {
-            console.log('Initial fetch');
             fetchLogs();
             setInitialFetch(false);
         }
 
         let flag = false;
         if (autoRefresh === true) {
-            console.log('Auto refresh');
             flag = true;
             fetchLogs();
         }
@@ -115,14 +115,13 @@ function DashboardPage() {
         setAutoRefresh(!autoRefresh);
     }
 
-
     return (
         <div className='App'>
 
             <div className="App-sidebar">
 
                 <div className="toggle-controls" >
-                    <h1>Filters</h1>
+                    <h1>| Filters |</h1>
                 </div>
 
                 <SideBar
@@ -140,7 +139,7 @@ function DashboardPage() {
                     {loading === true
                         ? (
                             <div className="toggle-controls">
-                                <h2>Loading Dashboard...</h2>
+                                <h2>Loading Boards...</h2>
                             </div>)
                         : (backendData.logs.length === 0
                             ? (
@@ -163,27 +162,27 @@ function DashboardPage() {
                                         // If the start and end date are set
                                         ? (filters.startDate === filters.endDate
                                             // Show the date if both dates are the same
-                                            ? (<h2>Dashboarding logs of the day {backendData.logs[0].timestamp.split('T')[0]}</h2>)
+                                            ? (<h2>Showing logs of the day {backendData.logs[0].timestamp.split('T')[0]}</h2>)
                                             // Show the date range if both dates are set
-                                            : (<h2>Dashboarding logs between latest found: {backendData.logs[backendData.logs.length - 1].timestamp.split('T')[0] + " "} and earliest found: {backendData.logs[0].timestamp.split('T')[0]}</h2>))
+                                            : (<h2>Showing logs between latest found:
+                                                {backendData.logs[backendData.logs.length - 1].timestamp.split('T')[0] + " "}
+                                                and earliest found: {backendData.logs[0].timestamp.split('T')[0]}</h2>))
                                         // Show all logs if no date range is set
-                                        : (<h2>Dashboarding all logs</h2>)}
-                                    <div className="toggle-controls">
+                                        : (filters.senderID ? <h2>Showing logs from {filters.senderID}</h2> : <h2>Showing logs from all boards</h2>)}
 
-                                        <button title='Change autorefresh mode' onClick={handleAutoRefreshChange}>
-                                            {autoRefresh ? "Auto Refresh [ON]" : "Auto Refresh [OFF]"}</button>
-                                    </div>
+                                    <button title='Change autorefresh mode' onClick={handleAutoRefreshChange}>
+                                        {autoRefresh ? "Auto Refresh [ON]" : "Auto Refresh [OFF]"}</button>
                                 </div>
 
-                                <div className="dashboard-controls">
-                                    <PieChart logs={backendData.logs} />
-                                </div>
-                                <div className="dashboard-controls">
-                                    <BarChart logs={backendData.logs} />
-                                </div>
-                                <div className="dashboard-controls">
-                                    <LineChart logs={backendData.logs} />
-                                </div>
+                                {/* Make a card for each board*/}
+
+                                {filters.senderID
+                                    ? <LogCard logs={backendData.logs} boardName={filters.senderID} />
+                                    : boards.map(board => (
+                                        <LogCard key={board.id} logs={backendData.logs.filter(log => log.boardId === board.id)} boardName={board} />
+                                    ))
+                                }
+
                             </div>
 
 
@@ -198,5 +197,5 @@ function DashboardPage() {
 }
 
 
-export default DashboardPage;
+export default BoardsPage;
 

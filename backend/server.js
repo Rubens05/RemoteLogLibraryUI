@@ -196,6 +196,16 @@ app.get('/api/filters', async (req, res) => {
     }
 });
 
+app.get('/api/boards', async (req, res) => {
+    try {
+        const boards = await Log.distinct("idSender");
+        res.json({ boards });
+    } catch (error) {
+        console.error("Error fetching boards:", error);
+        res.status(500).json({ message: "Error fetching boards" });
+    }
+});
+
 
 
 app.listen(5000, () => {

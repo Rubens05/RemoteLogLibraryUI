@@ -110,15 +110,15 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
             <div key={key}>
                 <div>
                     <label htmlFor='dateStart'>Start Date: </label>
-                    {console.log('startDate', startDate)}
-                    {console.log('endDate', endDate)}
+                    {/* {console.log('startDate', startDate)}
+                    {console.log('endDate', endDate)} */}
                     <input type='date' id='dateStart' name='dateStart' value={startDate} max={filters.endDate}
                         onChange={(e) => handleStartDateChange(e.target.value)} />
                 </div>
                 <div>
                     <label htmlFor='dateEnd'>End Date: </label>
-                    {console.log('startDate', startDate)}
-                    {console.log('endDate', endDate)}
+                    {/* {console.log('startDate', startDate)}
+                    {console.log('endDate', endDate)} */}
                     <input type='date' id='dateEnd' name='dateEnd' value={endDate} min={filters.startDate}
                         onChange={(e) => handleEndDateChange(e.target.value)} />
                 </div>

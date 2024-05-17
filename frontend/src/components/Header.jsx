@@ -15,8 +15,8 @@ function Header() {
                     <button> Home
                     </button>
                 </Link>
-                <Link to='/dashboard'>
-                    <button >Dashboard
+                <Link to='/boards'>
+                    <button >Boards
                     </button>
                 </Link>
                 <Link to='/contact'>

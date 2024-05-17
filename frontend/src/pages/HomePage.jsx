@@ -121,7 +121,7 @@ function HomePage() {
             <div className="App-sidebar">
 
                 <div className="toggle-controls" >
-                    <h1>Filters</h1>
+                    <h1>| Filters |</h1>
                 </div>
 
                 <SideBar
