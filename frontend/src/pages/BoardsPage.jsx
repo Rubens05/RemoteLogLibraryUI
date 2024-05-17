@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import SideBar from '../components/SideBar';
 import LogCard from '../components/dashboarComponents/LogCard';
+import Loader from '../components/Loader';
 import '../App.css';
 
 
@@ -48,7 +49,7 @@ function BoardsPage() {
 
     // Fetch logs when filters change and peridically fetch new logs
     useEffect(() => {
-        const fetchLogs = () => {
+        const fetchLogs = async () => {
             setLoading(true);
 
             const { startDate, endDate, level, senderID, topic, message, hourStart, hourEnd } = filters;
@@ -56,43 +57,46 @@ function BoardsPage() {
             const queryString = `startDate=${startDate}&endDate=${endDate}&level=${level}&senderID=${senderID}` +
                 `&topic=${topic}&message=${message}&hourStart=${hourStart}&hourEnd=${hourEnd}`;
 
-            fetch(`/api?${queryString}`)
-                .then(response => response.json())
-                .then(data => {
-                    setBackendData(data);
-                    if (data.logs.length > 0) {
-                        setLastFetchTime(data.logs[0].timestamp);
+            try {
+                const response = await fetch(`/api?${queryString}`);
+                const data = await response.json();
+                setBackendData(data);
+                if (data.logs.length > 0) {
+                    console.log("Logs fetched:", data.logs);
+                    setLastFetchTime(data.logs[0].timestamp);
+                }
+
+                if (autoRefresh) {
+                    console.log('Auto refreshhhhhhhhhhhhhhh');
+                    const newResponse = await fetch(`/api/new?lastTimestamp=${lastFetchTime}&hourStart=${hourStart}&hourEnd=${hourEnd}`);
+                    const newData = await newResponse.json();
+                    console.log('New logs:', newData);
+                    if (newData.logs.length > 0) {
+                        setBackendData(prev => ({ logs: [...newData.logs, ...prev.logs] }));
+                        setLastFetchTime(newData.logs[0].timestamp);
                     }
-                });
+                }
 
-            if (autoRefresh) {
-                fetch(`/api/new?lastTimestamp=${lastFetchTime}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.logs.length > 0) {
-                            setBackendData(prev => ({ logs: [...data.logs, ...prev.logs] }));
-                            setLastFetchTime(data.logs[0].timestamp);
-                        }
-
-                    });
+                if (backendData.logs.length > 0 && initialFetch === false && autoRefresh === false) {
+                    console.log('Last fetch time:', backendData.logs[0].timestamp);
+                    setLastFetchTime(backendData.logs[0].timestamp);
+                }
+            } catch (error) {
+                console.error('Error fetching logs:', error);
+            } finally {
+                setLoading(false);
             }
-
-
-            if (backendData.logs.length > 0 && initialFetch === false && autoRefresh === false) {
-                setLastFetchTime(backendData.logs[0].timestamp)
-            }
-
-            setLoading(false);
-
         };
 
         if (initialFetch) {
+            console.log('Initial fetch');
             fetchLogs();
             setInitialFetch(false);
         }
 
         let flag = false;
         if (autoRefresh === true) {
+            console.log('Auto refresh');
             flag = true;
             fetchLogs();
         }
@@ -105,6 +109,7 @@ function BoardsPage() {
 
 
     }, [filters, autoRefresh]);
+
 
     const handleFiltersChange = (newFilters) => {
         setInitialFetch(true);
@@ -138,9 +143,10 @@ function BoardsPage() {
                     {/*TODO insert loader component*/}
                     {loading === true
                         ? (
-                            <div className="toggle-controls">
-                                <h2>Loading Boards...</h2>
-                            </div>)
+                            <div className="Loader-grid">
+                                <Loader />
+                            </div>
+                        )
                         : (backendData.logs.length === 0
                             ? (
 

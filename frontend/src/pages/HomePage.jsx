@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import LogsTable from '../components/LogsTable';
 import SideBar from '../components/SideBar';
+import Loader from '../components/Loader';
 import '../App.css';
 
 function HomePage() {
@@ -139,9 +140,7 @@ function HomePage() {
                     {/*TODO insert loader component*/}
                     {loading === true
                         ? (
-                            <div className="toggle-controls">
-                                <h2>Loading Logs...</h2>
-                            </div>)
+                            <Loader />)
 
 
                         : (backendData.logs.length === 0

@@ -17,6 +17,17 @@ const getImageUrl = (boardName) => {
     return images[boardName + ".jpg"] || images['defaultBoard.jpg']; // Retorna una imagen por defecto si el nombre no coincide
 };
 
+const getColorForLevel = (level) => {
+    const colors = {
+        ERROR: 'red',
+        WARNING: 'yellow',
+        INFO: 'green',
+        DEBUG: 'peru',
+        CRITICAL: 'violet'
+    };
+    return colors[level] || '#808080';
+};
+
 
 
 const LogCard = ({ logs, boardName }) => {
@@ -71,15 +82,5 @@ const LogCard = ({ logs, boardName }) => {
     );
 };
 
-const getColorForLevel = (level) => {
-    const colors = {
-        ERROR: 'red',
-        WARNING: 'yellow',
-        INFO: 'green',
-        DEBUG: 'peru',
-        CRITICAL: 'violet'
-    };
-    return colors[level] || '#808080';
-};
 
 export default LogCard;
