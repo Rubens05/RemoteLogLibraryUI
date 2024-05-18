@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const LogsTable = ({ logs, format }) => {
+const LogsTable = ({ logs, format, darkTheme }) => {
     const [currentPage, setCurrentPage] = useState(0);
     const [itemsPerPage, setItemsPerPage] = useState(16);
     const [useLocalTime, setUseLocalTime] = useState(false);
@@ -8,8 +8,8 @@ const LogsTable = ({ logs, format }) => {
     const [columnWidths, setColumnWidths] = useState({
         level: 300,
         message: 600,
-        senderID: 100,
-        topic: 100,
+        senderID: 200,
+        topic: 200,
         timestamp: 250
     });
 
@@ -46,14 +46,6 @@ const LogsTable = ({ logs, format }) => {
         document.addEventListener('mouseup', handleMouseUp);
     };
 
-    const sortedLogs = logs.sort((a, b) => {
-        if (sortDirection === 'asc') {
-            return new Date(a.timestamp) - new Date(b.timestamp);
-        } else {
-            return new Date(b.timestamp) - new Date(a.timestamp);
-        }
-    });
-
     const toggleSortDirection = () => {
         setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
     };
@@ -87,7 +79,7 @@ const LogsTable = ({ logs, format }) => {
         <div>
 
 
-            <table className="LogsTable">
+            <table className={`LogsTable ${darkTheme ? 'dark-theme' : 'light-theme'}`}>
 
                 <thead>
                     <tr>

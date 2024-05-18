@@ -20,9 +20,9 @@ const getImageUrl = (boardName) => {
 const getColorForLevel = (level) => {
     const colors = {
         ERROR: 'red',
-        WARNING: 'yellow',
+        WARNING: 'orange',
         INFO: 'green',
-        DEBUG: 'peru',
+        DEBUG: 'blue',
         CRITICAL: 'violet'
     };
     return colors[level] || '#808080';

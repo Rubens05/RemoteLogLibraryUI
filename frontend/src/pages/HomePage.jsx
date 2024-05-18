@@ -8,6 +8,7 @@ function HomePage() {
     const [backendData, setBackendData] = useState({ logs: [] });
     const [loading, setLoading] = useState(false);
     const [format, setFormat] = useState('default'); // New state for formatting
+    const [darkTheme, setDarkTheme] = useState(false);
     const [lastFetchTime, setLastFetchTime] = useState(null);
     const [autoRefresh, setAutoRefresh] = useState(false); // Default autorefresh off
     const [initialFetch, setInitialFetch] = useState(true); // Initial fetch to get the logs, and handle filters change
@@ -108,6 +109,7 @@ function HomePage() {
 
     // Function to toggle the format
     const toggleFormat = () => {
+        setDarkTheme(!darkTheme);
         setFormat(format === 'default' ? 'colored' : 'default');
     };
 
@@ -182,7 +184,7 @@ function HomePage() {
                                     </div>
 
                                 </div>
-                                <LogsTable logs={backendData.logs} format={format} />
+                                <LogsTable logs={backendData.logs} format={format} darkTheme={darkTheme} />
                             </div>)
                         )
                     }
