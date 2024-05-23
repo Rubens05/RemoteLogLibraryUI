@@ -7,7 +7,6 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
     const [level, setLevel] = useState('');
     const [senderID, setSenderID] = useState('');
     const [topic, setTopic] = useState('');
-    const [message, setMessage] = useState('');
     const [hourStart, setHourStart] = useState("00:00");
     const [hourEnd, setHourEnd] = useState("23:59");
 
@@ -20,8 +19,6 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
         setEndDate(end);
         onFiltersChange({ startDate, endDate: end });
     };
-
-
 
     const handleTimeChange = (e, type) => {
         const time = e.target.value;
@@ -36,8 +33,6 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
         const timeValue = type === 'start' ? hourStart : hourEnd;
         onFiltersChange({ [type === 'start' ? 'hourStart' : 'hourEnd']: timeValue });
     };
-
-
 
     const handleLevelChange = (e) => {
         const newLevel = e.target.value;
@@ -57,35 +52,12 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
         onFiltersChange({ topic: newTopic });
     };
 
-    const handleMessageChange = (event) => {
-        setMessage(event.target.value);
-    };
-
-    const handleKeyDown = (event) => {
-        if (event.key === 'Enter') {
-            submitMessageSearch();
-        }
-    };
-
-    const handleBlur = () => {
-        submitMessageSearch();
-    };
-
-
-
-    const submitMessageSearch = () => {
-
-        onFiltersChange({ message: message.trim() });
-
-    };
-
     const clearFilters = () => {
         setStartDate(null);
         setEndDate(null);
         setLevel('');
         setSenderID('');
         setTopic('');
-        setMessage('');
         setHourStart("00:00");
         setHourEnd("23:59");
 
@@ -96,7 +68,6 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
             level: '',
             senderID: '',
             topic: '',
-            message: '',
             hourStart: '00:00',
             hourEnd: '23:59'
         });
@@ -110,15 +81,11 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
             <div key={key}>
                 <div>
                     <label htmlFor='dateStart'>Start Date: </label>
-                    {/* {console.log('startDate', startDate)}
-                    {console.log('endDate', endDate)} */}
                     <input type='date' id='dateStart' name='dateStart' value={startDate} max={filters.endDate}
                         onChange={(e) => handleStartDateChange(e.target.value)} />
                 </div>
                 <div>
                     <label htmlFor='dateEnd'>End Date: </label>
-                    {/* {console.log('startDate', startDate)}
-                    {console.log('endDate', endDate)} */}
                     <input type='date' id='dateEnd' name='dateEnd' value={endDate} min={filters.startDate}
                         onChange={(e) => handleEndDateChange(e.target.value)} />
                 </div>
@@ -142,7 +109,6 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
                     />
                 </div>
             </div>
-
 
             <p>Level</p>
             <select id="level" name="level" value={level} onChange={handleLevelChange}>
@@ -168,20 +134,9 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
                 ))}
             </select>
 
-            <p>Message</p>
-            <input type="text" id="message" name="message" value={message}
-                placeholder="Search by message"
-                onChange={handleMessageChange}
-                onKeyDown={handleKeyDown}
-                onBlur={handleBlur} />
-
             <div className="pagination-controls">
-
                 <button onClick={clearFilters}>Clear filters</button>
-
             </div>
-
-
         </div>
     );
 }

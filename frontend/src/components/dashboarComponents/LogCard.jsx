@@ -12,8 +12,6 @@ const importAll = (r) => {
 const images = importAll(require.context('../../boardImages', false, /\.(webp|jpg)$/));
 
 const getImageUrl = (boardName) => {
-    console.log("Board name:", boardName);
-    console.log("Images:", images);
     return images[boardName + ".jpg"] || images['defaultBoard.jpg']; // Retorna una imagen por defecto si el nombre no coincide
 };
 
@@ -30,26 +28,103 @@ const getColorForLevel = (level) => {
 
 
 
-const LogCard = ({ logs, boardName }) => {
+const LogCard = ({ logs, boardName, filterStartDate, filterEndDate }) => {
     // Preprocesar los datos para la gráfica
     const levels = ['ERROR', 'WARNING', 'INFO', 'DEBUG', 'CRITICAL'];
-    const data = [];
+    let data = [];
+    let interval;
+
+    if (logs.length === 0) return null;
+
+    // If no filter dates are set, filter by day
+    if (!filterStartDate || !filterEndDate) {
+        if (logs.length > 500 && logs.length < 3600) {
+            interval = 'hour';
+        }
+        else if (logs.length < 500) {
+            interval = 'minute';
+        }
+        else {
+            interval = 'day';
+        }
+    }
+
+    // If both filter dates are set and are the same, filter by hour
+    if ((filterStartDate && filterEndDate) && (filterStartDate === filterEndDate)) {
+        if (logs.length > 3600) {
+            interval = 'hour';
+        } else {
+            interval = 'minute';
+        }
+    }
+
+    // If both filter dates are set and are different, choose the interval in function of the time difference
+    if ((filterStartDate && filterEndDate) && (filterStartDate !== filterEndDate)) {
+        const endDate = new Date(filterEndDate);
+        const startDate = new Date(filterStartDate);
+        const timeDiff = (endDate - startDate) / 1000; // Diferencia en segundos
+
+        if (logs.length > 500 && logs.length < 3600) {
+            interval = 'hour';
+        }
+        else if (logs.length < 500) {
+            interval = 'minute';
+        }
+        else {
+            interval = 'day';
+        }
+
+        console.log('Time difference:', timeDiff, 'Interval:', interval);
+    }
+
+    const getTimeKey = (date) => {
+        if (interval === 'minute') {
+            return date.toISOString().substring(0, 16) + ":00";
+        } else if (interval === 'day') {
+            return date.toISOString().substring(0, 10);
+        } else {
+            return date.toISOString().substring(0, 13) + ":00";
+        }
+    };
+
+    // Set begin and end date
+    let beginDate = new Date(logs[logs.length - 1].timestamp);
+    let endDate = new Date(logs[0].timestamp);
+
+    // Add the initial point
+    let initialPoint = { time: getTimeKey(beginDate) };
+    levels.forEach(level => initialPoint[level] = 0);
+    data.push(initialPoint);
 
     logs.forEach(log => {
         const date = new Date(log.timestamp);
-        const hour = date.toISOString().substring(0, 13) + ":00"; // Agrupar por horas
-        let dataPoint = data.find(d => d.time === hour);
+
+        let time = "";
+
+        if (interval === 'minute') {
+            time = date.toISOString().substring(0, 16) + ":00";
+        } else if (interval === 'day') {
+            time = date.toISOString().substring(0, 10);
+        } else {
+            time = date.toISOString().substring(0, 13) + ":00";
+        }
+
+
+        let dataPoint = data.find(d => d.time === time);
 
         if (!dataPoint) {
-            dataPoint = { time: hour };
+            dataPoint = { time: time };
             levels.forEach(level => dataPoint[level] = 0);
             data.push(dataPoint);
         }
 
         dataPoint[log.level] += 1;
     });
+    // Add the final point
+    let finalPoint = { time: getTimeKey(endDate) };
+    levels.forEach(level => finalPoint[level] = 0);
+    data.push(finalPoint);
 
-    // Ordenar los datos por tiempo
     data.sort((a, b) => new Date(a.time) - new Date(b.time));
 
     return (

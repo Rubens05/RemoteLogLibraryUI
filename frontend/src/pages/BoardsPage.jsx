@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import SideBar from '../components/SideBar';
+import SideBarBoards from '../components/SideBarBoards';
 import LogCard from '../components/dashboarComponents/LogCard';
 import Loader from '../components/Loader';
 import '../App.css';
@@ -42,6 +42,7 @@ function BoardsPage() {
             .then(response => response.json())
             .then(data => {
                 setBoards(data.boards);
+                console.log('Boards:', data.boards);
             })
             .catch(error => console.error('Error loading boards:', error));
     }, []);
@@ -50,7 +51,6 @@ function BoardsPage() {
     // Fetch logs when filters change and peridically fetch new logs
     useEffect(() => {
         const fetchLogs = async () => {
-            setLoading(true);
 
             const { startDate, endDate, level, senderID, topic, message, hourStart, hourEnd } = filters;
             console.log('Filters:', filters);
@@ -58,8 +58,10 @@ function BoardsPage() {
                 `&topic=${topic}&message=${message}&hourStart=${hourStart}&hourEnd=${hourEnd}`;
 
             try {
+                setLoading(true);
                 const response = await fetch(`/api?${queryString}`);
                 const data = await response.json();
+                setLoading(false)
                 setBackendData(data);
                 if (data.logs.length > 0) {
                     console.log("Logs fetched:", data.logs);
@@ -67,7 +69,6 @@ function BoardsPage() {
                 }
 
                 if (autoRefresh) {
-                    console.log('Auto refreshhhhhhhhhhhhhhh');
                     const newResponse = await fetch(`/api/new?lastTimestamp=${lastFetchTime}&hourStart=${hourStart}&hourEnd=${hourEnd}`);
                     const newData = await newResponse.json();
                     console.log('New logs:', newData);
@@ -83,8 +84,6 @@ function BoardsPage() {
                 }
             } catch (error) {
                 console.error('Error fetching logs:', error);
-            } finally {
-                setLoading(false);
             }
         };
 
@@ -129,7 +128,7 @@ function BoardsPage() {
                     <h1>| Filters |</h1>
                 </div>
 
-                <SideBar
+                <SideBarBoards
                     onFiltersChange={handleFiltersChange}
                     levelOptions={levelOptions}
                     senderOptions={senderOptions}
@@ -140,8 +139,7 @@ function BoardsPage() {
 
             <div>
                 <div className='App-logs'>
-                    {/*TODO insert loader component*/}
-                    {loading === true
+                    {(loading === true && autoRefresh === false)
                         ? (
                             <div className="Loader-grid">
                                 <Loader />
@@ -183,10 +181,21 @@ function BoardsPage() {
                                 {/* Make a card for each board*/}
 
                                 {filters.senderID
-                                    ? <LogCard logs={backendData.logs} boardName={filters.senderID} />
-                                    : boards.map(board => (
-                                        <LogCard key={board.id} logs={backendData.logs.filter(log => log.boardId === board.id)} boardName={board} />
-                                    ))
+                                    ? <LogCard logs={backendData.logs} boardName={filters.senderID} filterStartDate={filters.startDate} filterEndDate={filters.endDate} />
+                                    : boards.map(board => {
+
+                                        // Filtra los logs por el idSender del board
+                                        const filteredLogs = backendData.logs.filter(log => {
+                                            if (log.idSender === board) {
+                                                return true;
+                                            }
+                                        });
+
+                                        console.log(`Logs for board ${board}:`, filteredLogs);
+                                        return (
+                                            <LogCard key={board.id} logs={filteredLogs} boardName={board} filterStartDate={filters.startDate} filterEndDate={filters.endDate} />
+                                        );
+                                    })
                                 }
 
                             </div>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import LogsTable from '../components/LogsTable';
-import SideBar from '../components/SideBar';
+import SideBarLogs from '../components/SideBarLogs';
 import Loader from '../components/Loader';
 import '../App.css';
 
@@ -59,7 +59,6 @@ function HomePage() {
                 }
 
                 if (autoRefresh) {
-                    console.log('Auto refreshhhhhhhhhhhhhhh');
                     const newResponse = await fetch(`/api/new?lastTimestamp=${lastFetchTime}&hourStart=${hourStart}&hourEnd=${hourEnd}`);
                     const newData = await newResponse.json();
                     console.log('New logs:', newData);
@@ -127,7 +126,7 @@ function HomePage() {
                     <h1>| Filters |</h1>
                 </div>
 
-                <SideBar
+                <SideBarLogs
                     onFiltersChange={handleFiltersChange}
                     levelOptions={levelOptions}
                     senderOptions={senderOptions}
@@ -138,9 +137,7 @@ function HomePage() {
 
             <div>
                 <div className='App-logs'>
-                    {/* Show the loading message if the logs are being fetched */}
-                    {/*TODO insert loader component*/}
-                    {loading === true
+                    {(loading === true && autoRefresh === false)
                         ? (
                             <Loader />)
 
