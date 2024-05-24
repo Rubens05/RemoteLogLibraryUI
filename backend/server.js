@@ -63,10 +63,12 @@ app.get('/api', async (req, res) => {
 
         }
 
-        if (level !== '') {
-            query.level = level;
-            console.log("Querying logs with level", level);
+        if (level && level !== '') {
+            const levelsArray = level.split(',').map(lvl => lvl.trim());
+            query.level = { $in: levelsArray };
+            console.log("Querying logs with levels", levelsArray);
         }
+
         if (senderID !== '') {
             query.idSender = senderID;
             console.log("Querying logs with senderID", senderID);

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import SideBarBoards from '../components/SideBarBoards';
-import LogCard from '../components/dashboarComponents/LogCard';
-import Loader from '../components/Loader';
+import SideBarBoards from '../components/boardsPage/SideBarBoards';
+import LogCard from '../components/boardsPage/LogCard';
+import Loader from '../components/common/Loader';
 import '../App.css';
 
 
@@ -18,7 +18,7 @@ function BoardsPage() {
     const [filters, setFilters] = useState({
         startDate: null,
         endDate: null,
-        level: '',
+        levels: [],
         senderID: '',
         topic: '',
         filterInterval: '',
@@ -52,9 +52,9 @@ function BoardsPage() {
     useEffect(() => {
         const fetchLogs = async () => {
 
-            const { startDate, endDate, level, senderID, topic, hourStart, hourEnd } = filters;
+            const { startDate, endDate, levels, senderID, topic, hourStart, hourEnd } = filters;
             console.log('Filters:', filters);
-            const queryString = `startDate=${startDate}&endDate=${endDate}&level=${level}&senderID=${senderID}` +
+            const queryString = `startDate=${startDate}&endDate=${endDate}&level=${levels}&senderID=${senderID}` +
                 `&topic=${topic}&hourStart=${hourStart}&hourEnd=${hourEnd}`;
 
             try {

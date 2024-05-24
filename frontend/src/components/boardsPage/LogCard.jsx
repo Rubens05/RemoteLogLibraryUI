@@ -44,10 +44,10 @@ const LogCard = ({ logs, boardName, filterStartDate, filterEndDate, filterInterv
         // If no filter dates are set, filter by day
         if (!filterStartDate || !filterEndDate) {
 
-            if (logs.length < 500) {
+            if (logs.length < 100) {
                 interval = 'minute';
             }
-            else if (logs.length > 500 && logs.length < 1500) {
+            else if (logs.length > 100 && logs.length < 1500) {
                 interval = 'hour';
             }
             else {
@@ -67,11 +67,8 @@ const LogCard = ({ logs, boardName, filterStartDate, filterEndDate, filterInterv
 
         // If both filter dates are set and are different, choose the interval in function of the time difference
         if ((filterStartDate && filterEndDate) && (filterStartDate !== filterEndDate)) {
-            const endDate = new Date(filterEndDate);
-            const startDate = new Date(filterStartDate);
-            const timeDiff = (endDate - startDate) / 1000; // Diferencia en segundos
 
-            if (logs.length < 500) {
+            if (logs.length < 100) {
                 interval = 'minute';
             }
             else if (logs.length > 500 && logs.length < 1500) {
@@ -81,7 +78,6 @@ const LogCard = ({ logs, boardName, filterStartDate, filterEndDate, filterInterv
                 interval = 'day';
             }
 
-            console.log('Time difference:', timeDiff, 'Interval:', interval);
         }
     }
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import LogsTable from '../components/LogsTable';
-import SideBarLogs from '../components/SideBarLogs';
-import Loader from '../components/Loader';
+import LogsTable from '../components/homePage/LogsTable';
+import SideBarLogs from '../components/homePage/SideBarLogs';
+import Loader from '../components/common/Loader';
 import '../App.css';
 
 function HomePage() {
@@ -18,7 +18,7 @@ function HomePage() {
     const [filters, setFilters] = useState({
         startDate: null,
         endDate: null,
-        level: '',
+        levels: [],
         senderID: '',
         topic: '',
         message: '',
@@ -44,9 +44,9 @@ function HomePage() {
         const fetchLogs = async () => {
             setLoading(true);
 
-            const { startDate, endDate, level, senderID, topic, message, hourStart, hourEnd } = filters;
+            const { startDate, endDate, levels, senderID, topic, message, hourStart, hourEnd } = filters;
             console.log('Filters:', filters);
-            const queryString = `startDate=${startDate}&endDate=${endDate}&level=${level}&senderID=${senderID}` +
+            const queryString = `startDate=${startDate}&endDate=${endDate}&level=${levels}&senderID=${senderID}` +
                 `&topic=${topic}&message=${message}&hourStart=${hourStart}&hourEnd=${hourEnd}`;
 
             try {

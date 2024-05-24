@@ -124,6 +124,40 @@
     transform: translateX(-100%);
   }
 
+  .dropdown {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .dropdown-toggle {
+    width: 100%;
+    padding: 8px;
+    background-color: white;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .dropdown-menu {
+    display: none;
+    position: absolute;
+    background-color: white;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    width: 100%;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .dropdown-menu.show {
+    display: block;
+  }
+
   .App-logs {
     flex-grow: 1;
     margin-left: 280px;
@@ -155,6 +189,7 @@
     width: 100%;
     padding: 0.5rem;
     margin-bottom: 1rem;
+    background-color: #fff;
     border: 1px solid #ddd;
     /* Subtle border */
     border-radius: 4px;

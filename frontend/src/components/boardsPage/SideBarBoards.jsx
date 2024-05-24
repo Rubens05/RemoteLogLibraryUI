@@ -4,12 +4,13 @@ const SideBarBoards = ({ onFiltersChange, levelOptions, senderOptions, topicOpti
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
     const [key, setKey] = useState(0);
-    const [level, setLevel] = useState('');
+    const [levels, setLevels] = useState([]);
     const [senderID, setSenderID] = useState('');
     const [topic, setTopic] = useState('');
     const [interval, setInterval] = useState('');
     const [hourStart, setHourStart] = useState("00:00");
     const [hourEnd, setHourEnd] = useState("23:59");
+    const [dropdownOpen, setDropdownOpen] = useState(false);
 
     const handleStartDateChange = (start) => {
         setStartDate(start);
@@ -35,10 +36,20 @@ const SideBarBoards = ({ onFiltersChange, levelOptions, senderOptions, topicOpti
         onFiltersChange({ [type === 'start' ? 'hourStart' : 'hourEnd']: timeValue });
     };
 
-    const handleLevelChange = (e) => {
-        const newLevel = e.target.value;
-        setLevel(newLevel);
-        onFiltersChange({ level: newLevel });
+    const handleLevelsChange = (e) => {
+        const selectedLevel = e.target.value;
+        let updatedLevels;
+        if (e.target.checked) {
+            updatedLevels = [...levels, selectedLevel];
+        } else {
+            updatedLevels = levels.filter(level => level !== selectedLevel);
+        }
+        setLevels(updatedLevels);
+        onFiltersChange({ levels: updatedLevels });
+    };
+
+    const toggleDropdown = () => {
+        setDropdownOpen(!dropdownOpen);
     };
 
     const handleSenderIDChange = (e) => {
@@ -59,10 +70,11 @@ const SideBarBoards = ({ onFiltersChange, levelOptions, senderOptions, topicOpti
         onFiltersChange({ interval: newInterval });
     }
 
+
     const clearFilters = () => {
         setStartDate(null);
         setEndDate(null);
-        setLevel('');
+        setLevels([]);
         setSenderID('');
         setTopic('');
         setInterval('');
@@ -73,7 +85,7 @@ const SideBarBoards = ({ onFiltersChange, levelOptions, senderOptions, topicOpti
         onFiltersChange({
             startDate: null,
             endDate: null,
-            level: '',
+            levels: [],
             senderID: '',
             topic: '',
             interval: '',
@@ -120,12 +132,28 @@ const SideBarBoards = ({ onFiltersChange, levelOptions, senderOptions, topicOpti
             </div>
 
             <p>Level</p>
-            <select id="level" name="level" value={level} onChange={handleLevelChange}>
-                <option value="">Select...</option>
-                {levelOptions.map(option => (
-                    <option key={option} value={option}>{option}</option>
-                ))}
-            </select>
+            <div className="dropdown">
+                <div className="dropdown-toggle" onClick={toggleDropdown}>
+                    Select Levels
+                </div>
+                <div className={`dropdown-menu ${dropdownOpen ? 'show' : ''}`}>
+                    <div className="checkbox-group">
+                        {levelOptions.map(option => (
+                            <div key={option}>
+                                <input
+                                    type="checkbox"
+                                    id={option}
+                                    name="levels"
+                                    value={option}
+                                    checked={levels.includes(option)}
+                                    onChange={handleLevelsChange}
+                                />
+                                <label htmlFor={option}>{option}</label>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
 
             <p>Sender ID</p>
             <select id="senderID" name="senderID" value={senderID} onChange={handleSenderIDChange}>
@@ -150,7 +178,6 @@ const SideBarBoards = ({ onFiltersChange, levelOptions, senderOptions, topicOpti
                 <option value="hour">Hour</option>
                 <option value="day">Day</option>
             </select>
-
 
             <div className="pagination-controls">
                 <button onClick={clearFilters}>Clear filters</button>
