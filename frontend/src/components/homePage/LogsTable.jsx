@@ -50,7 +50,15 @@ const LogsTable = ({ logs, format, darkTheme }) => {
         setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
     };
 
-    const paginatedLogs = logs.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
+    const sortedLogs = logs.sort((a, b) => {
+        if (sortDirection === 'asc') {
+            return new Date(a.timestamp) - new Date(b.timestamp);
+        } else {
+            return new Date(b.timestamp) - new Date(a.timestamp);
+        }
+    });
+
+    const paginatedLogs = sortedLogs.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
 
     const handlePageChange = (newPage) => {
         if (newPage >= 0 && newPage < Math.ceil(logs.length / itemsPerPage)) {
