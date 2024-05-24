@@ -75,7 +75,7 @@ app.get('/api', async (req, res) => {
             query.topic = topic;
             console.log("Querying logs with topic", topic);
         }
-        if (message !== '') {
+        if (message !== '' && message) {
             query.message = { $regex: message, $options: 'i' };
             console.log("Querying logs with message containing", message);
         }

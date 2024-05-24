@@ -28,7 +28,7 @@ const getColorForLevel = (level) => {
 
 
 
-const LogCard = ({ logs, boardName, filterStartDate, filterEndDate }) => {
+const LogCard = ({ logs, boardName, filterStartDate, filterEndDate, filterInterval }) => {
     // Preprocesar los datos para la gráfica
     const levels = ['ERROR', 'WARNING', 'INFO', 'DEBUG', 'CRITICAL'];
     let data = [];
@@ -36,45 +36,53 @@ const LogCard = ({ logs, boardName, filterStartDate, filterEndDate }) => {
 
     if (logs.length === 0) return null;
 
-    // If no filter dates are set, filter by day
-    if (!filterStartDate || !filterEndDate) {
-        if (logs.length > 500 && logs.length < 3600) {
-            interval = 'hour';
-        }
-        else if (logs.length < 500) {
-            interval = 'minute';
-        }
-        else {
-            interval = 'day';
-        }
-    }
+    if (filterInterval) {
+        console.log("Intervalo elegido: " + filterInterval)
+        interval = filterInterval;
+    } else {
 
-    // If both filter dates are set and are the same, filter by hour
-    if ((filterStartDate && filterEndDate) && (filterStartDate === filterEndDate)) {
-        if (logs.length > 3600) {
-            interval = 'hour';
-        } else {
-            interval = 'minute';
-        }
-    }
+        // If no filter dates are set, filter by day
+        if (!filterStartDate || !filterEndDate) {
 
-    // If both filter dates are set and are different, choose the interval in function of the time difference
-    if ((filterStartDate && filterEndDate) && (filterStartDate !== filterEndDate)) {
-        const endDate = new Date(filterEndDate);
-        const startDate = new Date(filterStartDate);
-        const timeDiff = (endDate - startDate) / 1000; // Diferencia en segundos
+            if (logs.length < 500) {
+                interval = 'minute';
+            }
+            else if (logs.length > 500 && logs.length < 1500) {
+                interval = 'hour';
+            }
+            else {
+                interval = 'day';
+            }
 
-        if (logs.length > 500 && logs.length < 3600) {
-            interval = 'hour';
-        }
-        else if (logs.length < 500) {
-            interval = 'minute';
-        }
-        else {
-            interval = 'day';
         }
 
-        console.log('Time difference:', timeDiff, 'Interval:', interval);
+        // If both filter dates are set and are the same, filter by hour
+        if ((filterStartDate && filterEndDate) && (filterStartDate === filterEndDate)) {
+            if (logs.length > 100) {
+                interval = 'hour';
+            } else {
+                interval = 'minute';
+            }
+        }
+
+        // If both filter dates are set and are different, choose the interval in function of the time difference
+        if ((filterStartDate && filterEndDate) && (filterStartDate !== filterEndDate)) {
+            const endDate = new Date(filterEndDate);
+            const startDate = new Date(filterStartDate);
+            const timeDiff = (endDate - startDate) / 1000; // Diferencia en segundos
+
+            if (logs.length < 500) {
+                interval = 'minute';
+            }
+            else if (logs.length > 500 && logs.length < 1500) {
+                interval = 'hour';
+            }
+            else {
+                interval = 'day';
+            }
+
+            console.log('Time difference:', timeDiff, 'Interval:', interval);
+        }
     }
 
     const getTimeKey = (date) => {

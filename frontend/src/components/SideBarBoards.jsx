@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 
-const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, filters }) => {
+const SideBarBoards = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, filters }) => {
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
     const [key, setKey] = useState(0);
     const [level, setLevel] = useState('');
     const [senderID, setSenderID] = useState('');
     const [topic, setTopic] = useState('');
+    const [interval, setInterval] = useState('');
     const [hourStart, setHourStart] = useState("00:00");
     const [hourEnd, setHourEnd] = useState("23:59");
 
@@ -52,12 +53,19 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
         onFiltersChange({ topic: newTopic });
     };
 
+    const handleIntervalChange = (e) => {
+        const newInterval = e.target.value;
+        setInterval(newInterval);
+        onFiltersChange({ interval: newInterval });
+    }
+
     const clearFilters = () => {
         setStartDate(null);
         setEndDate(null);
         setLevel('');
         setSenderID('');
         setTopic('');
+        setInterval('');
         setHourStart("00:00");
         setHourEnd("23:59");
 
@@ -68,6 +76,7 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
             level: '',
             senderID: '',
             topic: '',
+            interval: '',
             hourStart: '00:00',
             hourEnd: '23:59'
         });
@@ -134,6 +143,15 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
                 ))}
             </select>
 
+            <p>Time Interval</p>
+            <select id="interval" name="interval" value={interval} onChange={handleIntervalChange}>
+                <option value="" >Select...</option>
+                <option value="minute">Minute</option>
+                <option value="hour">Hour</option>
+                <option value="day">Day</option>
+            </select>
+
+
             <div className="pagination-controls">
                 <button onClick={clearFilters}>Clear filters</button>
             </div>
@@ -141,4 +159,4 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
     );
 }
 
-export default SideBar;
+export default SideBarBoards;

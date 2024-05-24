@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, filters }) => {
+const SideBarLogs = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, filters }) => {
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
     const [key, setKey] = useState(0);
@@ -184,4 +184,4 @@ const SideBar = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, f
     );
 }
 
-export default SideBar;
+export default SideBarLogs;

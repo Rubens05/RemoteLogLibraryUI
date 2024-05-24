@@ -113,7 +113,7 @@ const LogsTable = ({ logs, format, darkTheme }) => {
                     {paginatedLogs.map((log) => (
                         <tr key={log.id}>
                             {visibleColumns.level && <td className={`${getRowClass(log)} td ellipsis`}>{log.level}</td>}
-                            {visibleColumns.message && <td className={`${getRowClass(log)} td ellipsis`}>{log.message}</td>}
+                            {visibleColumns.message && <td title={log.message} className={`${getRowClass(log)} td ellipsis`}>{log.message}</td>}
                             {visibleColumns.senderID && <td className={`${getRowClass(log)} td ellipsis`}>{log.idSender}</td>}
                             {visibleColumns.topic && <td className={`${getRowClass(log)} td ellipsis`}>{log.topic}</td>}
                             {visibleColumns.timestamp && <td className={`${getRowClass(log)} td ellipsis dateCell`}>{formatTimestamp(log.timestamp)}</td>}

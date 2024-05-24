@@ -391,7 +391,6 @@
     width: 100%;
     height: 500px;
     background-color: #ccc;
-    /* Ajusta el tamaño como necesites */
   }
 
   .log-card {
@@ -410,12 +409,10 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    /* Cambiado a columna */
     align-items: center;
     justify-content: center;
     padding: 10px;
     border-bottom: 1px solid #ccc;
-    /* Cambiado a borde inferior */
     position: sticky;
     top: 0;
     background-color: #fff;
@@ -435,7 +432,6 @@
     max-width: 90%;
     max-height: 100%;
     border-radius: 8px;
-    /* margin-top: 3rem; */
   }
 
   .chart-container {
@@ -469,7 +465,7 @@
   .form-group input[type="email"],
   .form-group input[type="number"],
   .form-group input {
-    background-color: #c9c9c9;
+    background-color: #e4f4fd;
     width: 100%;
     padding: 8px;
     border: 1px solid #61dafb;
@@ -484,16 +480,23 @@
 
 
   .send-button {
-    background-color: #61dafb;
-    color: 61dafb;
+    background-color: #eae9e7;
     font-weight: bold;
     border: none;
     padding: 10px 20px;
     align-items: center;
     text-align: center;
-    display: inline-block;
     margin-top: 10px;
     cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    margin-left: 40%;
+  }
+
+
+  .send-button:hover {
+    background-color: #eae9e7bb;
+    /* Slightly darker on hover */
   }
 
   /* Styles for the loader */

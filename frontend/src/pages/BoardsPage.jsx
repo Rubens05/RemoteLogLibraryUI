@@ -21,7 +21,7 @@ function BoardsPage() {
         level: '',
         senderID: '',
         topic: '',
-        message: '',
+        filterInterval: '',
         hourStart: '00:00', // default 00
         hourEnd: '23:59' // default 23
     });
@@ -52,10 +52,10 @@ function BoardsPage() {
     useEffect(() => {
         const fetchLogs = async () => {
 
-            const { startDate, endDate, level, senderID, topic, message, hourStart, hourEnd } = filters;
+            const { startDate, endDate, level, senderID, topic, hourStart, hourEnd } = filters;
             console.log('Filters:', filters);
             const queryString = `startDate=${startDate}&endDate=${endDate}&level=${level}&senderID=${senderID}` +
-                `&topic=${topic}&message=${message}&hourStart=${hourStart}&hourEnd=${hourEnd}`;
+                `&topic=${topic}&hourStart=${hourStart}&hourEnd=${hourEnd}`;
 
             try {
                 setLoading(true);
@@ -179,9 +179,8 @@ function BoardsPage() {
                                 </div>
 
                                 {/* Make a card for each board*/}
-
                                 {filters.senderID
-                                    ? <LogCard logs={backendData.logs} boardName={filters.senderID} filterStartDate={filters.startDate} filterEndDate={filters.endDate} />
+                                    ? <LogCard logs={backendData.logs} boardName={filters.senderID} filterStartDate={filters.startDate} filterEndDate={filters.endDate} filterInterval={filters.interval} />
                                     : boards.map(board => {
 
                                         // Filtra los logs por el idSender del board
@@ -193,7 +192,7 @@ function BoardsPage() {
 
                                         console.log(`Logs for board ${board}:`, filteredLogs);
                                         return (
-                                            <LogCard key={board.id} logs={filteredLogs} boardName={board} filterStartDate={filters.startDate} filterEndDate={filters.endDate} />
+                                            <LogCard key={board} logs={filteredLogs} boardName={board} filterStartDate={filters.startDate} filterEndDate={filters.endDate} filterInterval={filters.interval} />
                                         );
                                     })
                                 }
