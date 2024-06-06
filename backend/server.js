@@ -69,13 +69,15 @@ app.get('/api', async (req, res) => {
             console.log("Querying logs with levels", levelsArray);
         }
 
-        if (senderID !== '') {
-            query.idSender = senderID;
-            console.log("Querying logs with senderID", senderID);
+        if (senderID && senderID !== '') {
+            const sendersArray = senderID.split(',').map(snd => snd.trim());
+            query.idSender = { $in: sendersArray };
+            console.log("Querying logs with senderIDs", sendersArray);
         }
-        if (topic !== '') {
-            query.topic = topic;
-            console.log("Querying logs with topic", topic);
+        if (topic && topic !== '') {
+            const topicsArray = topic.split(',').map(tp => tp.trim());
+            query.topic = { $in: topicsArray };
+            console.log("Querying logs with topics", topicsArray);
         }
         if (message !== '' && message) {
             query.message = { $regex: message, $options: 'i' };
