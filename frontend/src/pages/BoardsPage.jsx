@@ -19,8 +19,8 @@ function BoardsPage() {
         startDate: null,
         endDate: null,
         levels: [],
-        senderID: '',
-        topic: '',
+        senderIDs: [],
+        topics: [],
         filterInterval: '',
         hourStart: '00:00', // default 00
         hourEnd: '23:59' // default 23
@@ -52,10 +52,10 @@ function BoardsPage() {
     useEffect(() => {
         const fetchLogs = async () => {
 
-            const { startDate, endDate, levels, senderID, topic, hourStart, hourEnd } = filters;
+            const { startDate, endDate, levels, senderIDs, topics, hourStart, hourEnd } = filters;
             console.log('Filters:', filters);
-            const queryString = `startDate=${startDate}&endDate=${endDate}&level=${levels}&senderID=${senderID}` +
-                `&topic=${topic}&hourStart=${hourStart}&hourEnd=${hourEnd}`;
+            const queryString = `startDate=${startDate}&endDate=${endDate}&level=${levels}&senderID=${senderIDs}` +
+                `&topic=${topics}&hourStart=${hourStart}&hourEnd=${hourEnd}`;
 
             try {
                 setLoading(true);
@@ -172,15 +172,15 @@ function BoardsPage() {
                                                 {backendData.logs[backendData.logs.length - 1].timestamp.split('T')[0] + " "}
                                                 and earliest found: {backendData.logs[0].timestamp.split('T')[0]}</h2>))
                                         // Show all logs if no date range is set
-                                        : (filters.senderID ? <h2>Showing logs from {filters.senderID}</h2> : <h2>Showing logs from all boards</h2>)}
+                                        : (filters.senderIDs ? <h2>Showing logs from {filters.senderIDs}</h2> : <h2>Showing logs from all boards</h2>)}
 
                                     <button title='Change autorefresh mode' onClick={handleAutoRefreshChange}>
                                         {autoRefresh ? "Auto Refresh [ON]" : "Auto Refresh [OFF]"}</button>
                                 </div>
 
                                 {/* Make a card for each board*/}
-                                {filters.senderID
-                                    ? <LogCard logs={backendData.logs} boardName={filters.senderID} filterStartDate={filters.startDate} filterEndDate={filters.endDate} filterInterval={filters.interval} />
+                                {!filters.senderIDs && filters.senderIDs.length === 0
+                                    ? <LogCard logs={backendData.logs} boardName={filters.senderIDs} filterStartDate={filters.startDate} filterEndDate={filters.endDate} filterInterval={filters.interval} />
                                     : boards.map(board => {
 
                                         // Filtra los logs por el idSender del board

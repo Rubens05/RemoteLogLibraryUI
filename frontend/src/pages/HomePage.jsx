@@ -19,8 +19,8 @@ function HomePage() {
         startDate: null,
         endDate: null,
         levels: [],
-        senderID: '',
-        topic: '',
+        senderIDs: [],
+        topics: [],
         message: '',
         hourStart: '00:00', // default 00
         hourEnd: '23:59' // default 23
@@ -44,10 +44,10 @@ function HomePage() {
         const fetchLogs = async () => {
             setLoading(true);
 
-            const { startDate, endDate, levels, senderID, topic, message, hourStart, hourEnd } = filters;
+            const { startDate, endDate, levels, senderIDs, topics, message, hourStart, hourEnd } = filters;
             console.log('Filters:', filters);
-            const queryString = `startDate=${startDate}&endDate=${endDate}&level=${levels}&senderID=${senderID}` +
-                `&topic=${topic}&message=${message}&hourStart=${hourStart}&hourEnd=${hourEnd}`;
+            const queryString = `startDate=${startDate}&endDate=${endDate}&level=${levels}&senderID=${senderIDs}` +
+                `&topic=${topics}&message=${message}&hourStart=${hourStart}&hourEnd=${hourEnd}`;
 
             try {
                 const response = await fetch(`/api?${queryString}`);

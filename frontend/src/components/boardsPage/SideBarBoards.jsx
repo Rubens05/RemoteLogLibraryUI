@@ -5,12 +5,16 @@ const SideBarBoards = ({ onFiltersChange, levelOptions, senderOptions, topicOpti
     const [endDate, setEndDate] = useState(null);
     const [key, setKey] = useState(0);
     const [levels, setLevels] = useState([]);
-    const [senderID, setSenderID] = useState('');
-    const [topic, setTopic] = useState('');
+    const [senderIDs, setSenderIDs] = useState([]);
+    const [topics, setTopics] = useState([]);
     const [interval, setInterval] = useState('');
     const [hourStart, setHourStart] = useState("00:00");
     const [hourEnd, setHourEnd] = useState("23:59");
-    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [dropdownOpen, setDropdownOpen] = useState({
+        levels: false,
+        senderIDs: false,
+        topics: false
+    });
 
     const handleStartDateChange = (start) => {
         setStartDate(start);
@@ -48,20 +52,29 @@ const SideBarBoards = ({ onFiltersChange, levelOptions, senderOptions, topicOpti
         onFiltersChange({ levels: updatedLevels });
     };
 
-    const toggleDropdown = () => {
-        setDropdownOpen(!dropdownOpen);
-    };
 
     const handleSenderIDChange = (e) => {
-        const newSenderID = e.target.value;
-        setSenderID(newSenderID);
-        onFiltersChange({ senderID: newSenderID });
+        const selectedSenderID = e.target.value;
+        let updatedSenderIDs;
+        if (e.target.checked) {
+            updatedSenderIDs = [...senderIDs, selectedSenderID];
+        } else {
+            updatedSenderIDs = senderIDs.filter(id => id !== selectedSenderID);
+        }
+        setSenderIDs(updatedSenderIDs);
+        onFiltersChange({ senderIDs: updatedSenderIDs });
     };
 
     const handleTopicChange = (e) => {
-        const newTopic = e.target.value;
-        setTopic(newTopic);
-        onFiltersChange({ topic: newTopic });
+        const selectedTopic = e.target.value;
+        let updatedTopics;
+        if (e.target.checked) {
+            updatedTopics = [...topics, selectedTopic];
+        } else {
+            updatedTopics = topics.filter(topic => topic !== selectedTopic);
+        }
+        setTopics(updatedTopics);
+        onFiltersChange({ topics: updatedTopics });
     };
 
     const handleIntervalChange = (e) => {
@@ -70,13 +83,20 @@ const SideBarBoards = ({ onFiltersChange, levelOptions, senderOptions, topicOpti
         onFiltersChange({ interval: newInterval });
     }
 
+    const toggleDropdown = (field) => {
+        setDropdownOpen(prevState => ({
+            ...prevState,
+            [field]: !prevState[field]
+        }));
+    };
+
 
     const clearFilters = () => {
         setStartDate(null);
         setEndDate(null);
         setLevels([]);
-        setSenderID('');
-        setTopic('');
+        setSenderIDs([]);
+        setTopics([]);
         setInterval('');
         setHourStart("00:00");
         setHourEnd("23:59");
@@ -86,11 +106,17 @@ const SideBarBoards = ({ onFiltersChange, levelOptions, senderOptions, topicOpti
             startDate: null,
             endDate: null,
             levels: [],
-            senderID: '',
-            topic: '',
+            senderIDs: [],
+            topics: [],
             interval: '',
             hourStart: '00:00',
             hourEnd: '23:59'
+        });
+
+        setDropdownOpen({
+            levels: false,
+            senderIDs: false,
+            topics: false
         });
     };
 
@@ -133,10 +159,10 @@ const SideBarBoards = ({ onFiltersChange, levelOptions, senderOptions, topicOpti
 
             <p>Level</p>
             <div className="dropdown">
-                <div className="dropdown-toggle" onClick={toggleDropdown}>
+                <div className="dropdown-toggle" onClick={() => toggleDropdown('levels')}>
                     Select Levels
                 </div>
-                <div className={`dropdown-menu ${dropdownOpen ? 'show' : ''}`}>
+                <div className={`dropdown-menu ${dropdownOpen.levels ? 'show' : ''}`}>
                     <div className="checkbox-group">
                         {levelOptions.map(option => (
                             <div key={option}>
@@ -156,20 +182,53 @@ const SideBarBoards = ({ onFiltersChange, levelOptions, senderOptions, topicOpti
             </div>
 
             <p>Sender ID</p>
-            <select id="senderID" name="senderID" value={senderID} onChange={handleSenderIDChange}>
-                <option value="">Select...</option>
-                {senderOptions.map(option => (
-                    <option key={option} value={option}>{option}</option>
-                ))}
-            </select>
+            <div className="dropdown">
+                <div className="dropdown-toggle" onClick={() => toggleDropdown('senderIDs')}>
+                    Select Sender IDs
+                </div>
+                <div className={`dropdown-menu ${dropdownOpen.senderIDs ? 'show' : ''}`}>
+                    <div className="checkbox-group">
+                        {senderOptions.map(option => (
+                            <div key={option}>
+                                <input
+                                    type="checkbox"
+                                    id={option}
+                                    name="senderIDs"
+                                    value={option}
+                                    checked={senderIDs.includes(option)}
+                                    onChange={handleSenderIDChange}
+                                />
+                                <label htmlFor={option}>{option}</label>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
 
             <p>Topic</p>
-            <select id="topic" name="topic" value={topic} onChange={handleTopicChange}>
-                <option value="" >Select...</option>
-                {topicOptions.map(option => (
-                    <option key={option} value={option}>{option}</option>
-                ))}
-            </select>
+            <div className="dropdown">
+                <div className="dropdown-toggle" onClick={() => toggleDropdown('topics')}>
+                    Select Topics
+                </div>
+                <div className={`dropdown-menu ${dropdownOpen.topics ? 'show' : ''}`}>
+                    <div className="checkbox-group">
+                        {topicOptions.map(option => (
+                            <div key={option}>
+                                <input
+                                    type="checkbox"
+                                    id={option}
+                                    name="topics"
+                                    value={option}
+                                    checked={topics.includes(option)}
+                                    onChange={handleTopicChange}
+                                />
+                                <label htmlFor={option}>{option}</label>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
 
             <p>Time Interval</p>
             <select id="interval" name="interval" value={interval} onChange={handleIntervalChange}>

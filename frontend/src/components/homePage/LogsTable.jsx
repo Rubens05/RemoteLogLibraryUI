@@ -170,7 +170,7 @@ const LogsTable = ({ logs, format, darkTheme }) => {
                     Last
                 </button>
                 <select value={itemsPerPage} onChange={handleItemsPerPageChange}>
-                    <option value="16">16</option>
+                    <option value="16">Items per page</option>
                     <option value="50">50</option>
                     <option value="100">100</option>
                     <option value="500">500</option>
