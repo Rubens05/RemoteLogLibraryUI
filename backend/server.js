@@ -32,7 +32,7 @@ const Log = mongoose.model('Log', logSchema, "LogRegistry");
 // Endpoint for fetching logs
 app.get('/api', async (req, res) => {
     const { startDate, endDate, level, senderID, topic, message, hourStart, hourEnd, lastTimestamp, autoRefresh } = req.query;
-    console.log("Query params:", req.query);
+    console.log("Query 1 params:", req.query);
     try {
         const query = {};
 
@@ -85,8 +85,10 @@ app.get('/api', async (req, res) => {
         }
 
         if ((lastTimestamp !== 'null' && lastTimestamp !== '') && autoRefresh === "true") {
-            console.log("Querying logs greater than", lastTimestamp);
-            query.timestamp = { $gt: new Date(lastTimestamp) };
+            const date = new Date(lastTimestamp);
+            date.setUTCDate(date.getUTCDate());
+            console.log("Querying logs greater than", date.toUTCString());
+            query.timestamp = { $gt: date };
         }
 
         let logs = await Log.find(query).sort({ timestamp: -1 })/*.limit(500)*/; //Adjust logs limit
@@ -122,7 +124,7 @@ app.get('/api', async (req, res) => {
 // Endpoint for fetching new logs
 app.get('/api/new', async (req, res) => {
     const { lastTimestamp, hourEnd, hourStart } = req.query;
-    console.log("Query params:", req.query);
+    console.log("Query 2 params:", req.query);
     try {
         const date = new Date(lastTimestamp);
         date.setUTCDate(date.getUTCDate());
@@ -176,16 +178,6 @@ app.get('/api/filters', async (req, res) => {
     } catch (error) {
         console.error("Error fetching filter options:", error);
         res.status(500).json({ message: "Error fetching filter options" });
-    }
-});
-
-app.get('/api/boards', async (req, res) => {
-    try {
-        const boards = await Log.distinct("idSender");
-        res.json({ boards });
-    } catch (error) {
-        console.error("Error fetching boards:", error);
-        res.status(500).json({ message: "Error fetching boards" });
     }
 });
 

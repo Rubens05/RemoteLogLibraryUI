@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const SideBarBoards = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, filters }) => {
     const [startDate, setStartDate] = useState(null);
@@ -15,6 +15,28 @@ const SideBarBoards = ({ onFiltersChange, levelOptions, senderOptions, topicOpti
         senderIDs: false,
         topics: false
     });
+    const dropdownRefs = {
+        levels: useRef(null),
+        senderIDs: useRef(null),
+        topics: useRef(null)
+    };
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            const openDropdown = Object.keys(dropdownOpen).find(key => dropdownOpen[key]);
+            if (openDropdown && dropdownRefs[openDropdown].current && !dropdownRefs[openDropdown].current.contains(event.target)) {
+                setDropdownOpen(prevState => ({
+                    ...prevState,
+                    [openDropdown]: false
+                }));
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [dropdownOpen]);
 
     const handleStartDateChange = (start) => {
         setStartDate(start);
@@ -158,7 +180,7 @@ const SideBarBoards = ({ onFiltersChange, levelOptions, senderOptions, topicOpti
             </div>
 
             <p>Level</p>
-            <div className="dropdown">
+            <div className="dropdown" ref={dropdownRefs.levels}>
                 <div className="dropdown-toggle" onClick={() => toggleDropdown('levels')}>
                     Select Levels
                 </div>
@@ -182,7 +204,7 @@ const SideBarBoards = ({ onFiltersChange, levelOptions, senderOptions, topicOpti
             </div>
 
             <p>Sender ID</p>
-            <div className="dropdown">
+            <div className="dropdown" ref={dropdownRefs.senderIDs}>
                 <div className="dropdown-toggle" onClick={() => toggleDropdown('senderIDs')}>
                     Select Sender IDs
                 </div>
@@ -206,7 +228,7 @@ const SideBarBoards = ({ onFiltersChange, levelOptions, senderOptions, topicOpti
             </div>
 
             <p>Topic</p>
-            <div className="dropdown">
+            <div className="dropdown" ref={dropdownRefs.topics}>
                 <div className="dropdown-toggle" onClick={() => toggleDropdown('topics')}>
                     Select Topics
                 </div>

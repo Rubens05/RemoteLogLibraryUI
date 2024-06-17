@@ -11,7 +11,6 @@ function BoardsPage() {
     const [lastFetchTime, setLastFetchTime] = useState(null);
     const [autoRefresh, setAutoRefresh] = useState(false); // Default autorefresh off
     const [initialFetch, setInitialFetch] = useState(true); // Initial fetch to get the logs, and handle filters change
-    const [boards, setBoards] = useState([]); // New state for boards
     const [levelOptions, setLevelOptions] = useState([]);
     const [senderOptions, setSenderOptions] = useState([]);
     const [topicOptions, setTopicOptions] = useState([]);
@@ -36,78 +35,62 @@ function BoardsPage() {
                 setTopicOptions(data.topicOptions);
             })
             .catch(error => console.error('Error loading filter options:', error));
-
-        // Fetch the list of boards
-        fetch('/api/boards')
-            .then(response => response.json())
-            .then(data => {
-                setBoards(data.boards);
-                console.log('Boards:', data.boards);
-            })
-            .catch(error => console.error('Error loading boards:', error));
     }, []);
 
 
     // Fetch logs when filters change and peridically fetch new logs
     useEffect(() => {
         const fetchLogs = async () => {
-
-            const { startDate, endDate, levels, senderIDs, topics, hourStart, hourEnd } = filters;
+            const { startDate, endDate, levels, senderIDs, topics, message, hourStart, hourEnd } = filters;
             console.log('Filters:', filters);
             const queryString = `startDate=${startDate}&endDate=${endDate}&level=${levels}&senderID=${senderIDs}` +
                 `&topic=${topics}&hourStart=${hourStart}&hourEnd=${hourEnd}`;
 
             try {
                 setLoading(true);
-                const response = await fetch(`/api?${queryString}`);
-                const data = await response.json();
-                setLoading(false)
-                setBackendData(data);
-                if (data.logs.length > 0) {
-                    console.log("Logs fetched:", data.logs);
-                    setLastFetchTime(data.logs[0].timestamp);
-                }
+                let response;
+                let data;
 
-                if (autoRefresh) {
-                    const newResponse = await fetch(`/api/new?lastTimestamp=${lastFetchTime}&hourStart=${hourStart}&hourEnd=${hourEnd}`);
-                    const newData = await newResponse.json();
-                    console.log('New logs:', newData);
-                    if (newData.logs.length > 0) {
-                        setBackendData(prev => ({ logs: [...newData.logs, ...prev.logs] }));
-                        setLastFetchTime(newData.logs[0].timestamp);
+                if (initialFetch) {
+                    response = await fetch(`/api?${queryString}`);
+                    data = await response.json();
+                    setBackendData(data);
+                    if (data.logs.length > 0) {
+                        console.log("Initial logs fetched:", data.logs);
+                        setLastFetchTime(data.logs[0].timestamp);
                     }
-                }
-
-                if (backendData.logs.length > 0 && initialFetch === false && autoRefresh === false) {
-                    console.log('Last fetch time:', backendData.logs[0].timestamp);
-                    setLastFetchTime(backendData.logs[0].timestamp);
+                    setInitialFetch(false);
+                } else if (autoRefresh) {
+                    response = await fetch(`/api?${queryString}&lastTimestamp=${lastFetchTime}&autoRefresh=${autoRefresh}`);
+                    data = await response.json();
+                    if (data.logs.length > 0) {
+                        setBackendData(prev => ({ logs: [...data.logs, ...prev.logs] }));
+                        console.log('New logs fetched:', data.logs);
+                        setLastFetchTime(data.logs[0].timestamp);
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching logs:', error);
+            } finally {
+                setLoading(false);
             }
         };
 
         if (initialFetch) {
-            console.log('Initial fetch');
-            fetchLogs();
-            setInitialFetch(false);
-        }
-
-        let flag = false;
-        if (autoRefresh === true) {
-            console.log('Auto refresh');
-            flag = true;
             fetchLogs();
         }
 
-        if (flag) {
-            const interval = setInterval(fetchLogs, 10000); // Fetch new logs every 5 minutes
-            return () => clearInterval(interval);
+        let interval;
+        if (autoRefresh) {
+            interval = setInterval(fetchLogs, 10000); // Fetch new logs every 10 seconds
         }
 
-
-
-    }, [filters, autoRefresh]);
+        return () => {
+            if (interval) {
+                clearInterval(interval);
+            }
+        };
+    }, [filters, autoRefresh, initialFetch, lastFetchTime]);
 
 
     const handleFiltersChange = (newFilters) => {
@@ -171,8 +154,7 @@ function BoardsPage() {
                                             : (<h2>Showing logs between latest found:
                                                 {backendData.logs[backendData.logs.length - 1].timestamp.split('T')[0] + " "}
                                                 and earliest found: {backendData.logs[0].timestamp.split('T')[0]}</h2>))
-                                        // Show all logs if no date range is set
-                                        : (filters.senderIDs ? <h2>Showing logs from {filters.senderIDs}</h2> : <h2>Showing logs from all boards</h2>)}
+                                        : (<h2>Showing all logs</h2>)}
 
                                     <button title='Change autorefresh mode' onClick={handleAutoRefreshChange}>
                                         {autoRefresh ? "Auto Refresh [ON]" : "Auto Refresh [OFF]"}</button>
@@ -181,7 +163,7 @@ function BoardsPage() {
                                 {/* Make a card for each board*/}
                                 {!filters.senderIDs && filters.senderIDs.length === 0
                                     ? <LogCard logs={backendData.logs} boardName={filters.senderIDs} filterStartDate={filters.startDate} filterEndDate={filters.endDate} filterInterval={filters.interval} />
-                                    : boards.map(board => {
+                                    : senderOptions.map(board => {
 
                                         // Filtra los logs por el idSender del board
                                         const filteredLogs = backendData.logs.filter(log => {

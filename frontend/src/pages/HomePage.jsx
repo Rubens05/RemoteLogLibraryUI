@@ -42,35 +42,33 @@ function HomePage() {
     // Fetch logs when filters change and peridically fetch new logs
     useEffect(() => {
         const fetchLogs = async () => {
-            setLoading(true);
-
             const { startDate, endDate, levels, senderIDs, topics, message, hourStart, hourEnd } = filters;
             console.log('Filters:', filters);
             const queryString = `startDate=${startDate}&endDate=${endDate}&level=${levels}&senderID=${senderIDs}` +
                 `&topic=${topics}&message=${message}&hourStart=${hourStart}&hourEnd=${hourEnd}`;
 
             try {
-                const response = await fetch(`/api?${queryString}`);
-                const data = await response.json();
-                setBackendData(data);
-                if (data.logs.length > 0) {
-                    console.log("Logs fetched:", data.logs);
-                    setLastFetchTime(data.logs[0].timestamp);
-                }
+                setLoading(true);
+                let response;
+                let data;
 
-                if (autoRefresh) {
-                    const newResponse = await fetch(`/api/new?lastTimestamp=${lastFetchTime}&hourStart=${hourStart}&hourEnd=${hourEnd}`);
-                    const newData = await newResponse.json();
-                    console.log('New logs:', newData);
-                    if (newData.logs.length > 0) {
-                        setBackendData(prev => ({ logs: [...newData.logs, ...prev.logs] }));
-                        setLastFetchTime(newData.logs[0].timestamp);
+                if (initialFetch) {
+                    response = await fetch(`/api?${queryString}`);
+                    data = await response.json();
+                    setBackendData(data);
+                    if (data.logs.length > 0) {
+                        console.log("Initial logs fetched:", data.logs);
+                        setLastFetchTime(data.logs[0].timestamp);
                     }
-                }
-
-                if (backendData.logs.length > 0 && initialFetch === false && autoRefresh === false) {
-                    console.log('Last fetch time:', backendData.logs[0].timestamp);
-                    setLastFetchTime(backendData.logs[0].timestamp);
+                    setInitialFetch(false);
+                } else if (autoRefresh) {
+                    response = await fetch(`/api?${queryString}&lastTimestamp=${lastFetchTime}&autoRefresh=${autoRefresh}`);
+                    data = await response.json();
+                    if (data.logs.length > 0) {
+                        setBackendData(prev => ({ logs: [...data.logs, ...prev.logs] }));
+                        console.log('New logs fetched:', data.logs);
+                        setLastFetchTime(data.logs[0].timestamp);
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching logs:', error);
@@ -80,26 +78,24 @@ function HomePage() {
         };
 
         if (initialFetch) {
-            console.log('Initial fetch');
-            fetchLogs();
-            setInitialFetch(false);
-        }
-
-        let flag = false;
-        if (autoRefresh === true) {
-            console.log('Auto refresh');
-            flag = true;
             fetchLogs();
         }
 
-        if (flag) {
-            const interval = setInterval(fetchLogs, 10000); // Fetch new logs every 5 minutes
-            return () => clearInterval(interval);
+        let interval;
+        if (autoRefresh) {
+            interval = setInterval(fetchLogs, 10000); // Fetch new logs every 10 seconds
         }
 
+        return () => {
+            if (interval) {
+                clearInterval(interval);
+            }
+        };
+    }, [filters, autoRefresh, initialFetch, lastFetchTime]);
 
 
-    }, [filters, autoRefresh]);
+
+
 
     const handleFiltersChange = (newFilters) => {
         setInitialFetch(true);
@@ -125,7 +121,6 @@ function HomePage() {
                 <div className="toggle-controls" >
                     <h1>| Filters |</h1>
                 </div>
-
                 <SideBarLogs
                     onFiltersChange={handleFiltersChange}
                     levelOptions={levelOptions}

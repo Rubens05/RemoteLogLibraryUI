@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const SideBarLogs = ({ onFiltersChange, levelOptions, senderOptions, topicOptions, filters }) => {
     const [startDate, setStartDate] = useState(null);
@@ -15,6 +15,30 @@ const SideBarLogs = ({ onFiltersChange, levelOptions, senderOptions, topicOption
         senderIDs: false,
         topics: false
     });
+
+    const dropdownRefs = {
+        levels: useRef(null),
+        senderIDs: useRef(null),
+        topics: useRef(null)
+    };
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            const openDropdown = Object.keys(dropdownOpen).find(key => dropdownOpen[key]);
+            if (openDropdown && dropdownRefs[openDropdown].current && !dropdownRefs[openDropdown].current.contains(event.target)) {
+                setDropdownOpen(prevState => ({
+                    ...prevState,
+                    [openDropdown]: false
+                }));
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [dropdownOpen]);
+
 
     const handleStartDateChange = (start) => {
         setStartDate(start);
@@ -124,9 +148,9 @@ const SideBarLogs = ({ onFiltersChange, levelOptions, senderOptions, topicOption
         onFiltersChange({
             startDate: null,
             endDate: null,
-            level: [],
-            senderID: [],
-            topic: [],
+            levels: [],
+            senderIDs: [],
+            topics: [],
             message: '',
             hourStart: '00:00',
             hourEnd: '23:59'
@@ -179,7 +203,7 @@ const SideBarLogs = ({ onFiltersChange, levelOptions, senderOptions, topicOption
             </div>
 
             <p>Level</p>
-            <div className="dropdown">
+            <div className="dropdown" ref={dropdownRefs.levels}>
                 <div className="dropdown-toggle" onClick={() => toggleDropdown('levels')}>
                     Select Levels
                 </div>
@@ -203,7 +227,7 @@ const SideBarLogs = ({ onFiltersChange, levelOptions, senderOptions, topicOption
             </div>
 
             <p>Sender ID</p>
-            <div className="dropdown">
+            <div className="dropdown" ref={dropdownRefs.senderIDs}>
                 <div className="dropdown-toggle" onClick={() => toggleDropdown('senderIDs')}>
                     Select Sender IDs
                 </div>
@@ -227,8 +251,8 @@ const SideBarLogs = ({ onFiltersChange, levelOptions, senderOptions, topicOption
             </div>
 
             <p>Topic</p>
-            <div className="dropdown">
-                <div className="dropdown-toggle" onClick={() => toggleDropdown('topics')}>
+            <div className="dropdown" ref={dropdownRefs.topics}>
+                <div className="dropdown-toggle" onClick={() => toggleDropdown('topics')} onBlur={() => toggleDropdown('topics')}>
                     Select Topics
                 </div>
                 <div className={`dropdown-menu ${dropdownOpen.topics ? 'show' : ''}`}>
@@ -243,7 +267,7 @@ const SideBarLogs = ({ onFiltersChange, levelOptions, senderOptions, topicOption
                                     checked={topics.includes(option)}
                                     onChange={handleTopicChange}
                                 />
-                                <label htmlFor={option}>{option}</label>
+                                <label htmlFor={option} >{option}</label>
                             </div>
                         ))}
                     </div>
