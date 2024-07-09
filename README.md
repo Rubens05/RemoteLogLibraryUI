@@ -2,4 +2,5 @@
 
 ![Diagrama del sistema](frontend/public/LogLibraryUI.png)
 
-Launch the GUI with "npm start" in the frontend and backend directories and enjoy!
+Para ejecutar la app simplemente hay que establecer la URI de conexión a la base de datos MongoDB en el archivo server.js (o en un archivo .env) y posteriormente ejecutar el comando ```npm start``` en los directorios backend y frontend.
+
